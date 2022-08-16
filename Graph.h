@@ -41,7 +41,7 @@ public:
     //Getters
     int getOrder();
     int sorteia(int tamanho);
-    Graph* refinamento(ofstream &output_file);
+    Graph* refinamento(ofstream &output_file,Graph *grafo);
     int getNumberEdges();
     Node *getFirstNode();
     Node *getLastNode();

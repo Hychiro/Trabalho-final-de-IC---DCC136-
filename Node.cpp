@@ -96,8 +96,7 @@ void Node::insertEdge(int target_id, int rotulo){
         edge->setRotulo(rotulo);
         this->last_edge->setNextEdge(edge);
         this->last_edge = edge;
-        this->incrementDegree();
-        //getNode(target_id)->incrementInDegree();
+        this->degree=this->degree+1;
 
     }
     else{
@@ -105,8 +104,8 @@ void Node::insertEdge(int target_id, int rotulo){
         this->first_edge = new Edge(target_id, this->getId());
         this->first_edge->setRotulo(rotulo);
         this->last_edge = this->first_edge;
-        this->incrementDegree();
-        //getNode(target_id)->incrementInDegree();
+        this->degree=this->degree+1;
+
 
     }
 

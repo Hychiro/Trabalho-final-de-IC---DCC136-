@@ -92,7 +92,7 @@ int menu()
 
     cout << "MENU" << endl;
     cout << "----" << endl;
-    cout << "[1]  Algoritmo Guloso" << endl;
+    cout << "[1] Algoritmo Guloso" << endl;
     cout << "[2] Algoritmo Guloso Randomizado" << endl;
     cout << "[3] Algoritmo Guloso Randomizado Reativo" << endl;
     cout << "[4] Printando o Grafo " << endl;
@@ -117,8 +117,15 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
         output_file << "Algoritmo Guloso" << endl;
 
         Graph *novoGrafo = graph->guloso(output_file);
-       
-        Graph *ag = novoGrafo->agmPrim(output_file);
+
+
+        cout<<"pre refinamento"<<endl;
+        Graph *ag = novoGrafo->refinamento(output_file, graph);
+        cout<<"pos refinamento"<<endl;
+
+
+
+    
         output_file << "Quantidade minima de rotulos: " << ag->getNumRotulos() << endl;
         
 
