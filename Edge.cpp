@@ -17,7 +17,6 @@ Edge::Edge(int target_id, int origem_id){
     this->origem_id = origem_id;
     this->target_id = target_id;
     this->next_edge = NULL;
-    this->rotulo = -1;
 
 }
 

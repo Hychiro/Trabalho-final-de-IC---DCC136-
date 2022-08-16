@@ -40,7 +40,9 @@ public:
     // Getters
     int getOrder();
     int sorteia(int tamanho);
-    Graph *refinamento(ofstream &output_file);
+
+    Graph *refinamento(ofstream &output_file, Graph *grafo);
+
     int getNumberEdges();
     Node *getFirstNode();
     Node *getLastNode();
@@ -49,8 +51,8 @@ public:
     // Other methods
     Graph *ils(ofstream &output_file);
     Graph *buscaLocal(Graph *grafo);
-    Graph *buscaLocalAleatoria(Graph *grafo,ofstream &output_file);
-    int buscaRotuloAleatorio( int numRotTOTAL);
+    Graph *buscaLocalAleatoria(Graph *grafo, ofstream &output_file);
+    int buscaRotuloAleatorio(int numRotTOTAL);
     Graph *realizaPertubacao(Graph *grafo);
     Graph *preencheGraph(Graph *grafo);
 
