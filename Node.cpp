@@ -133,7 +133,7 @@ void Node::removeAllEdges(){
 
 }
 
-int Node::removeEdge(int id, bool directed, Node* target_node){
+int Node::removeEdge(int id,Node* target_node){
     // Verifies whether the edge to remove is in the node
     if(this->searchEdge(id)){
 

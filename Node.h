@@ -43,7 +43,7 @@ class Node{
         bool searchEdge(int target_id);
         void insertEdge(int target_id, int rotulo);
         void removeAllEdges();
-        int removeEdge(int id, bool directed, Node* target_node);
+        int removeEdge(int id,  Node* target_node);
         void incrementDegree();
         void decrementDegree();
         Edge* hasEdgeBetween(int target_id);

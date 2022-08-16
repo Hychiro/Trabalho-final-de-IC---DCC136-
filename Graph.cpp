@@ -22,7 +22,29 @@ using namespace std;
 
 /**************************************************************************************************
  * Defining the Graph's methods
-**************************************************************************************************/
+ **************************************************************************************************/
+// ILS
+
+// Graph *Graph::buscaLocal(Graph *grafo)
+// {
+//     Graph *novoGrafo = grafo;
+//     bool found = true;
+//     std::list<int>::iterator k;
+//     for (k = rotulos.begin(); k != rotulos.end(); k++)
+//     {
+//         found = (std::find(grafo->rotulos.begin(), grafo->rotulos.end(), k) != grafo->rotulos.end());
+//         if (!found)
+//         {
+//             novoGrafo->adicionaRotulo(k,novoGrafo,grafo);
+//             novoGrafo = novoGrafo->refinamento();
+//             if (grafo >= novoGrafo)
+//             {
+//                 return novoGrafo;
+//             }
+//         }
+//     }
+//     return grafo;
+// }
 
 // Constructor
 Graph::Graph(int order, int numeroRotulos)
@@ -88,7 +110,7 @@ int Graph::getNumberEdges()
 {
     return this->number_edges / 2;
 }
-//Function that verifies if the graph is directed
+// Function that verifies if the graph is directed
 
 Node *Graph::getFirstNode()
 {
@@ -113,7 +135,7 @@ bool Graph::getConexGraph()
     This allows the correct updating of the numbers of edges in the graph being directed or not.
 */
 
-//implementacao abaixo:
+// implementacao abaixo:
 
 void Graph::insertNode(int id)
 {
@@ -263,7 +285,7 @@ bool Graph::searchNode(int id)
 
 Node *Graph::getNode(int id)
 {
-    //pega o no na lista de nos
+    // pega o no na lista de nos
     Node *p = first_node;
     if (searchNode(id))
     {
@@ -282,56 +304,56 @@ Graph *Graph::guloso(ofstream &output_file)
 {
 
     //// função pra ver se é conexo
-    if (this->verificaConexo(this)) //verifica se o grafo gerADOR É CONEXO
+    if (this->verificaConexo(this)) // verifica se o grafo gerADOR É CONEXO
     {
 
-        //INICIO FUNÇÃO ORDENA CANDIDATOS
-        std::list<int> arestasPorRotulo; //fila que aramzena os rotulos em ordem decrecente
+        // INICIO FUNÇÃO ORDENA CANDIDATOS
+        std::list<int> arestasPorRotulo; // fila que aramzena os rotulos em ordem decrecente
         std::list<int>::iterator iterador;
 
-        int vetorarestasPorRotulo[this->numeroRotulos]; //vetor que faz relação posição=Rotulo e valor da posição=numero de arestas;
+        int vetorarestasPorRotulo[this->numeroRotulos]; // vetor que faz relação posição=Rotulo e valor da posição=numero de arestas;
         int vetorAux[this->numeroRotulos];
 
         for (int i = 0; i < this->numeroRotulos; i++)
         {
-            //repetir para o numero de rotulos
-            vetorarestasPorRotulo[i] = contaRotulo(i); //para a posição i(que representa o Rótulo i) atribui o valor numero de arestas do Rotulo i
+            // repetir para o numero de rotulos
+            vetorarestasPorRotulo[i] = contaRotulo(i); // para a posição i(que representa o Rótulo i) atribui o valor numero de arestas do Rotulo i
             vetorAux[i] = 0;
         }
 
-        pair<int, int> maiorRotulo; //par que representa o maior rotulo atual <numero de arestas,Rotulo>
-        maiorRotulo.first = 0;      //inicia o numero de arestas como 0
-        maiorRotulo.second = -1;    //inicia o Rotulo como -1
+        pair<int, int> maiorRotulo; // par que representa o maior rotulo atual <numero de arestas,Rotulo>
+        maiorRotulo.first = 0;      // inicia o numero de arestas como 0
+        maiorRotulo.second = -1;    // inicia o Rotulo como -1
 
-        while (arestasPorRotulo.size() < this->numeroRotulos) //enquanto o tamanho da fila for menor que o numero de Rotulos
+        while (arestasPorRotulo.size() < this->numeroRotulos) // enquanto o tamanho da fila for menor que o numero de Rotulos
         {
 
-            for (int j = 0; j < this->numeroRotulos; j++) //repetir para o numero de rotulos
+            for (int j = 0; j < this->numeroRotulos; j++) // repetir para o numero de rotulos
             {
-                if (maiorRotulo.first <= vetorarestasPorRotulo[j]) //se o numero de arestas do maior Rotulo Atual for menor ou igual do numero de arestas do rotulo a ser analisado (precisa ser menor ou IGUAL pq caso exista um Rotulo com 0 arestas iria bugar o codigo)
+                if (maiorRotulo.first <= vetorarestasPorRotulo[j]) // se o numero de arestas do maior Rotulo Atual for menor ou igual do numero de arestas do rotulo a ser analisado (precisa ser menor ou IGUAL pq caso exista um Rotulo com 0 arestas iria bugar o codigo)
                 {
-                    maiorRotulo.first = vetorarestasPorRotulo[j]; //numero de arestas do maior rotulo igual ao numero de arestas do rotulo analisado
-                    maiorRotulo.second = j;                       //maior Rotulo igual ao Rotulo analisado
+                    maiorRotulo.first = vetorarestasPorRotulo[j]; // numero de arestas do maior rotulo igual ao numero de arestas do rotulo analisado
+                    maiorRotulo.second = j;                       // maior Rotulo igual ao Rotulo analisado
                 }
             }
             vetorAux[maiorRotulo.second] = maiorRotulo.first;
-            arestasPorRotulo.push_back(maiorRotulo.second); //adiciona na parte de tras da fila o maior Rotulo da iteração
+            arestasPorRotulo.push_back(maiorRotulo.second); // adiciona na parte de tras da fila o maior Rotulo da iteração
 
-            vetorarestasPorRotulo[maiorRotulo.second] = -1; //modifica no vetor o RRotulo que ja foi adicionado para que ele não se repita
+            vetorarestasPorRotulo[maiorRotulo.second] = -1; // modifica no vetor o RRotulo que ja foi adicionado para que ele não se repita
 
-            maiorRotulo.first = 0;   //reinicia o numero de arestas como 0
-            maiorRotulo.second = -1; //reinicia o Rotulo como -1
+            maiorRotulo.first = 0;   // reinicia o numero de arestas como 0
+            maiorRotulo.second = -1; // reinicia o Rotulo como -1
         }
-        //FIM FUNÇÃO ORDENA CANDIDATOS
+        // FIM FUNÇÃO ORDENA CANDIDATOS
 
         Graph *q = new Graph(this->order, 0); //-1 pois começamos a contar os rotulos do 0, então -1 significa que não a rotulos
-        while (!q->verificaConexo(q))         //Enquanto o grafo solução não for conexo repita
+        while (!q->verificaConexo(q))         // Enquanto o grafo solução não for conexo repita
         {
 
-            //Heuristica
+            // Heuristica
             int rotuloAdicionado = arestasPorRotulo.front();
-            q->adicionaRotulo(rotuloAdicionado, q, this); //chama a função q coloca o Rotulo no grafo e adiciona as arestas desse Rotulo
-            arestasPorRotulo.pop_front();                 //remove o topo da fila
+            q->adicionaRotulo(rotuloAdicionado, q, this); // chama a função q coloca o Rotulo no grafo e adiciona as arestas desse Rotulo
+            arestasPorRotulo.pop_front();                 // remove o topo da fila
         }
 
         return q;
@@ -367,75 +389,75 @@ Graph *Graph::gulosoRandomizadoAux(float alfa, int instancia, int numIteracoes, 
 }
 
 Graph *Graph::gulosoRandomizado(float alfa, ofstream &output_file)
-{ //deve ser iniciado com Instancia 0 e Grafo melhorSolução==GrafoGerador
+{ // deve ser iniciado com Instancia 0 e Grafo melhorSolução==GrafoGerador
 
-    //INICIO FUNÇÃO ORDENA CANDIDATOS
-    std::list<int> arestasPorRotulo; //fila que aramzena os rotulos em ordem decrecente
+    // INICIO FUNÇÃO ORDENA CANDIDATOS
+    std::list<int> arestasPorRotulo; // fila que aramzena os rotulos em ordem decrecente
     std::list<int>::iterator iterador;
-    int vetorarestasPorRotulo[this->numeroRotulos]; //vetor que faz relação posição=Rotulo e valor da posição=numero de arestas;
+    int vetorarestasPorRotulo[this->numeroRotulos]; // vetor que faz relação posição=Rotulo e valor da posição=numero de arestas;
     int vetorAux[this->numeroRotulos];
     for (int i = 0; i < this->numeroRotulos; i++)
-    {                                              //repetir para o numero de rotulos
-        vetorarestasPorRotulo[i] = contaRotulo(i); //para a posição i(que representa o Rótulo i) atribui o valor numero de arestas do Rotulo i
+    {                                              // repetir para o numero de rotulos
+        vetorarestasPorRotulo[i] = contaRotulo(i); // para a posição i(que representa o Rótulo i) atribui o valor numero de arestas do Rotulo i
         vetorAux[i] = 0;
     }
 
-    pair<int, int> maiorRotulo; //par que representa o maior rotulo atual <numero de arestas,Rotulo>
-    maiorRotulo.first = 0;      //inicia o numero de arestas como 0
-    maiorRotulo.second = -1;    //inicia o Rotulo como -1
+    pair<int, int> maiorRotulo; // par que representa o maior rotulo atual <numero de arestas,Rotulo>
+    maiorRotulo.first = 0;      // inicia o numero de arestas como 0
+    maiorRotulo.second = -1;    // inicia o Rotulo como -1
 
-    while (arestasPorRotulo.size() < this->numeroRotulos) //enquanto o tamanho da fila for menor que o numero de Rotulos
+    while (arestasPorRotulo.size() < this->numeroRotulos) // enquanto o tamanho da fila for menor que o numero de Rotulos
     {
-        for (int i = 0; i < this->numeroRotulos; i++) //repetir para o numero de rotulos
+        for (int i = 0; i < this->numeroRotulos; i++) // repetir para o numero de rotulos
         {
-            if (maiorRotulo.first <= vetorarestasPorRotulo[i]) //se o numero de arestas do maior Rotulo Atual for menor ou igual do numero de arestas do rotulo a ser analisado (precisa ser menor ou IGUAL pq caso exista um Rotulo com 0 arestas iria bugar o codigo)
+            if (maiorRotulo.first <= vetorarestasPorRotulo[i]) // se o numero de arestas do maior Rotulo Atual for menor ou igual do numero de arestas do rotulo a ser analisado (precisa ser menor ou IGUAL pq caso exista um Rotulo com 0 arestas iria bugar o codigo)
             {
-                maiorRotulo.first = vetorarestasPorRotulo[i]; //numero de arestas do maior rotulo igual ao numero de arestas do rotulo analisado
-                maiorRotulo.second = i;                       //maior Rotulo igual ao Rotulo analisado
+                maiorRotulo.first = vetorarestasPorRotulo[i]; // numero de arestas do maior rotulo igual ao numero de arestas do rotulo analisado
+                maiorRotulo.second = i;                       // maior Rotulo igual ao Rotulo analisado
             }
         }
         vetorAux[maiorRotulo.second] = maiorRotulo.first;
-        arestasPorRotulo.push_back(maiorRotulo.second); //adiciona na parte de tras da fila o maior Rotulo da iteração
+        arestasPorRotulo.push_back(maiorRotulo.second); // adiciona na parte de tras da fila o maior Rotulo da iteração
 
-        vetorarestasPorRotulo[maiorRotulo.second] = -1; //modifica no vetor o RRotulo que ja foi adicionado para que ele não se repita
+        vetorarestasPorRotulo[maiorRotulo.second] = -1; // modifica no vetor o RRotulo que ja foi adicionado para que ele não se repita
 
-        maiorRotulo.first = 0;   //reinicia o numero de arestas como 0
-        maiorRotulo.second = -1; //reinicia o Rotulo como -1
+        maiorRotulo.first = 0;   // reinicia o numero de arestas como 0
+        maiorRotulo.second = -1; // reinicia o Rotulo como -1
     }
-    //FIM FUNÇÃO ORDENA CANDIDATOS
+    // FIM FUNÇÃO ORDENA CANDIDATOS
 
     Graph *q = new Graph(this->order, 0); //-1 pois começamos a contar os rotulos do 0, então -1 significa que não a rotulos
-    while (!q->verificaConexo(q))         //Enquanto o grafo solução não for conexo repita
+    while (!q->verificaConexo(q))         // Enquanto o grafo solução não for conexo repita
     {
 
-        int numeroCadidatosPlausiveis = ceil(arestasPorRotulo.size() * alfa); //usa o alfa para saber quantas posições da fila temos que analisar
-                                                                              //sorteia um numero entre 0 e numeroCadidatosPlausiveis
+        int numeroCadidatosPlausiveis = ceil(arestasPorRotulo.size() * alfa); // usa o alfa para saber quantas posições da fila temos que analisar
+                                                                              // sorteia um numero entre 0 e numeroCadidatosPlausiveis
         int k = (rand() % numeroCadidatosPlausiveis);
 
         int contador = 0;
-        for (iterador = arestasPorRotulo.begin(); iterador != arestasPorRotulo.end(); iterador++) //percorre todos os valores da lista
+        for (iterador = arestasPorRotulo.begin(); iterador != arestasPorRotulo.end(); iterador++) // percorre todos os valores da lista
         {
 
             if (contador == k)
-            {                                                 //quando o contador for igual ao numero sorteado
-                int rotuloAdicionado = *iterador;             //rotulo adicionado recebe o valor que esta no iterador
-                q->adicionaRotulo(rotuloAdicionado, q, this); //chama a função q coloca o Rotulo no grafo e adiciona as arestas desse Rotulo
+            {                                                 // quando o contador for igual ao numero sorteado
+                int rotuloAdicionado = *iterador;             // rotulo adicionado recebe o valor que esta no iterador
+                q->adicionaRotulo(rotuloAdicionado, q, this); // chama a função q coloca o Rotulo no grafo e adiciona as arestas desse Rotulo
                 arestasPorRotulo.erase(iterador);
-                break; //remove a posição sorteada da fila
+                break; // remove a posição sorteada da fila
             }
             contador++;
         }
     }
-    //chama o método recursivamente
-    //delete q;
-    //arestasPorRotulo.~list();
+    // chama o método recursivamente
+    // delete q;
+    // arestasPorRotulo.~list();
     return q;
 }
 
 Graph *Graph::gulosoRandomizadoReativoAux(int instancia, ofstream &output_file)
 {
     output_file << "Algoritmo Guloso Radomizado Reativo" << endl;
-    
+
     int numAlfa; // encontra o num total de alfas
     cout << "Digite o Numero de alfas a serem adicionados:" << endl;
     cin >> numAlfa;
@@ -443,32 +465,31 @@ Graph *Graph::gulosoRandomizadoReativoAux(int instancia, ofstream &output_file)
     float probAlfa[numAlfa]; // guarda a probabilidade de todos os alfas, utilizar a posição do vetor alfa como referencia
     float mediaAlfa[numAlfa];
     int vezesUsada[numAlfa];
-     for (int i = 0; i < numAlfa; i++)
-        {
-            cout << "Digite o alfa " << i << ":" << endl;
-            cin >> alfa[i];
+    for (int i = 0; i < numAlfa; i++)
+    {
+        cout << "Digite o alfa " << i << ":" << endl;
+        cin >> alfa[i];
 
-            probAlfa[i] = 0;
-            mediaAlfa[i] = 0;
-            vezesUsada[i] = 0;
-        }
+        probAlfa[i] = 0;
+        mediaAlfa[i] = 0;
+        vezesUsada[i] = 0;
+    }
     int numdInteracoes;
     cout << "Digite o numero de Iteracoes:" << endl;
     cin >> numdInteracoes;
-    
+
     int clo = clock();
 
     Graph *melhorSolucao = this;
     float qualidade[numAlfa];
-   
-    
+
     while (instancia < numdInteracoes)
     {
 
         Graph *itAtual = this;
         if (instancia < numAlfa)
         {
-            
+
             Graph *aux = itAtual->gulosoRandomizado(alfa[instancia], output_file);
 
             vezesUsada[instancia] = vezesUsada[instancia] + 1;
@@ -482,7 +503,7 @@ Graph *Graph::gulosoRandomizadoReativoAux(int instancia, ofstream &output_file)
         }
         else
         {
-             float somaDasQualidades = 0;
+            float somaDasQualidades = 0;
             for (int i = 0; i < numAlfa; i++)
             {
                 qualidade[i] = (float)melhorSolucao->getNumRotulos() / mediaAlfa[i];
@@ -493,7 +514,6 @@ Graph *Graph::gulosoRandomizadoReativoAux(int instancia, ofstream &output_file)
                 probAlfa[j] = qualidade[j] / somaDasQualidades;
             }
 
-            
             int alfaEscolhido = funcEscolheAlfa(numAlfa, alfa, probAlfa, output_file);
 
             Graph *aux = itAtual->gulosoRandomizado(alfa[alfaEscolhido], output_file);
@@ -508,17 +528,17 @@ Graph *Graph::gulosoRandomizadoReativoAux(int instancia, ofstream &output_file)
         }
         instancia++;
     }
-   /* for (int j = 0; j < numAlfa; j++)
-        {
-            output_file << "O alfa " << alfa[j] << " teve: " << endl;
-            output_file << "Probabilidade final de " << probAlfa[j] << endl;
-            output_file << "Media final de " << mediaAlfa[j] << endl;
-            output_file << "Numero de particopações total igual a " << vezesUsada[j] << endl;
-            output_file << endl;
-        }*/
-        
-        output_file<<"tempo de execucao: "<<(clock() - clo)<<" millisegundos"<<endl;
-   
+    /* for (int j = 0; j < numAlfa; j++)
+         {
+             output_file << "O alfa " << alfa[j] << " teve: " << endl;
+             output_file << "Probabilidade final de " << probAlfa[j] << endl;
+             output_file << "Media final de " << mediaAlfa[j] << endl;
+             output_file << "Numero de particopações total igual a " << vezesUsada[j] << endl;
+             output_file << endl;
+         }*/
+
+    output_file << "tempo de execucao: " << (clock() - clo) << " millisegundos" << endl;
+
     return melhorSolucao;
 }
 
@@ -529,22 +549,22 @@ void Graph::aumentaQtdRotulos()
 
 void Graph::adicionaRotulo(int rotuloAnalisado, Graph *grafoNovo, Graph *grafoOriginal)
 {
-    //adiciona o Rotulo no grafoNovo
+    // adiciona o Rotulo no grafoNovo
     list<int> aux = grafoNovo->rotulos;
     aux.push_back(rotuloAnalisado);
     grafoNovo->rotulos = aux;
     grafoNovo->aumentaQtdRotulos();
     Node *it;
     Edge *it2;
-    //percorre todas as arestas
+    // percorre todas as arestas
     for (Node *it = grafoOriginal->getFirstNode(); it != NULL; it = it->getNextNode())
     {
 
         for (Edge *it2 = it->getFirstEdge(); it2 != NULL; it2 = it2->getNextEdge())
         {
-            if (it2->getRotulo() == rotuloAnalisado) //se o rotulo da aresta for igual ao rotuloAnalisado
+            if (it2->getRotulo() == rotuloAnalisado) // se o rotulo da aresta for igual ao rotuloAnalisado
             {
-                grafoNovo->insertEdge(it->getId(), it2->getTargetId(), rotuloAnalisado); //adiciona a aresta no grafoNovo
+                grafoNovo->insertEdge(it->getId(), it2->getTargetId(), rotuloAnalisado); // adiciona a aresta no grafoNovo
             }
         }
     }
@@ -554,15 +574,15 @@ void Graph::adicionaRotulo(int rotuloAnalisado, Graph *grafoNovo, Graph *grafoOr
 bool Graph::verificaConexo(Graph *grafo) // ta errado
 {
 
-    //com o id do vértice acha o vertice que deve ser analisado
+    // com o id do vértice acha o vertice que deve ser analisado
     int idParametro = grafo->getFirstNode()->getId();
-    //cria um vetor que marca quais vértices ja foram analisados
+    // cria um vetor que marca quais vértices ja foram analisados
     bool visitados[grafo->getOrder()];
-    //cria o vetor ligacao que verifica se tem caminho entre os vertices dizendo quais vértices se ligam de alguma maneira ao primeiro vertice
+    // cria o vetor ligacao que verifica se tem caminho entre os vertices dizendo quais vértices se ligam de alguma maneira ao primeiro vertice
     bool ligacao[grafo->getOrder()];
-    //cria uma fila que diz quais vertices ainda precisam ser analisados
+    // cria uma fila que diz quais vertices ainda precisam ser analisados
     list<int> fila;
-    //adiciona o vertice inicial nele
+    // adiciona o vertice inicial nele
     fila.push_front(idParametro);
 
     for (int i = 0; i < grafo->getOrder(); i++)
@@ -571,27 +591,27 @@ bool Graph::verificaConexo(Graph *grafo) // ta errado
         ligacao[i] = false;
     }
 
-    //começa iteração (enquanto a fila não estiver vazia repita)
+    // começa iteração (enquanto a fila não estiver vazia repita)
     while (!(fila.empty()))
     {
-        //pega um vértice a ser analisado da fila
+        // pega um vértice a ser analisado da fila
         int aux = fila.front();
         int IdAnalisado = aux;
         Node *V;
         V = getNode(fila.front());
-        //exclui ele da fila
+        // exclui ele da fila
         fila.pop_front();
-        //verifica se o vértice a ser analisado ja foi analisado. (se ele ja foi acaba essa iteração)
+        // verifica se o vértice a ser analisado ja foi analisado. (se ele ja foi acaba essa iteração)
         Edge *it;
         if (visitados[IdAnalisado] == false)
         {
-            //marca o vértice como visitado;
+            // marca o vértice como visitado;
             visitados[IdAnalisado] = true;
-            //marca ele como fazendo parrte da ligacao
+            // marca ele como fazendo parrte da ligacao
 
             // tem caminho
             ligacao[IdAnalisado] = true;
-            //adiciona todos os vértices adjacentes a ele na fila
+            // adiciona todos os vértices adjacentes a ele na fila
             for (Edge *it = V->getFirstEdge(); it != NULL; it = it->getNextEdge())
             {
                 int verticeAdjacente = it->getTargetId();
@@ -692,12 +712,12 @@ int Graph::funcEscolheAlfa(int numAlfa, float *alfa, float *probAlfa, ofstream &
 Graph *Graph::getVertexInduced(int *listIdNodes, int tam)
 {
     Graph *subGrafo = new Graph(this->getOrder(), this->getNumRotulos());
-    //para todo noh da lista faça
+    // para todo noh da lista faça
 
     for (int i = 0; i < tam; i++)
     {
 
-        //incluir noh no subgrafo
+        // incluir noh no subgrafo
         if (this->searchNode(listIdNodes[i]))
         {
             subGrafo->insertNode(listIdNodes[i]);
@@ -707,12 +727,12 @@ Graph *Graph::getVertexInduced(int *listIdNodes, int tam)
     Node *orig;
     Edge *aux;
     bool verificaSeTem = false;
-    //para todo noh do subgrafo,
+    // para todo noh do subgrafo,
     for (p = subGrafo->getFirstNode(); p != NULL; p = p->getNextNode())
     {
         orig = getNode(p->getId());
 
-        //verificar as arestas no grafo original.
+        // verificar as arestas no grafo original.
         for (aux = orig->getFirstEdge(); aux != NULL; aux = aux->getNextEdge())
         {
 
@@ -743,50 +763,50 @@ Graph *Graph::agmPrim(ofstream &output_file)
     grafoVI = this->getVertexInduced(listaNos, tamanho);
     Graph *grafoX = new Graph(this->getOrder(), 0);
     Node *p;
-    //para todo noh da lista faça
+    // para todo noh da lista faça
     for (p = grafoVI->getFirstNode(); p != NULL; p = p->getNextNode())
     {
         grafoX->insertNode(p->getId());
     }
-    bool adicionados[this->order]; //marca quais vértices ja possuem um caminho
+    bool adicionados[this->order]; // marca quais vértices ja possuem um caminho
     for (int j = 0; j < this->order; j++)
     {
         adicionados[j] = false;
     }
     adicionados[1] = true;
-    std::list<int> vertices; //marca quais vértices ja possuem um caminho
+    std::list<int> vertices; // marca quais vértices ja possuem um caminho
     std::list<int>::iterator k;
-    vertices.push_front(1); //adiciona o primeiro vértice na lista
+    vertices.push_front(1); // adiciona o primeiro vértice na lista
 
     bool todosVerticesAdicionados = false;
 
-    while (todosVerticesAdicionados == false) //repetir até ter um caminho para todos os vértices
+    while (todosVerticesAdicionados == false) // repetir até ter um caminho para todos os vértices
     {
-        int vertice1; //nó que vai armazenar o vértice de onde vai sair a aresta
-        int vertice2; //nó que vai armazenar o vértice que a aresta vai chegar
+        int vertice1; // nó que vai armazenar o vértice de onde vai sair a aresta
+        int vertice2; // nó que vai armazenar o vértice que a aresta vai chegar
         int rotulo;
-        for (k = vertices.begin(); k != vertices.end(); k++) //percorre todos vértices da lista
+        for (k = vertices.begin(); k != vertices.end(); k++) // percorre todos vértices da lista
         {
-            Node *verticeAnalisado = grafoVI->getNode(*k);//vertice analisado
-            for (Edge *it = verticeAnalisado->getFirstEdge(); it != NULL; it = it->getNextEdge()) //percorre todas arestas do vertice analisado
+            Node *verticeAnalisado = grafoVI->getNode(*k);                                        // vertice analisado
+            for (Edge *it = verticeAnalisado->getFirstEdge(); it != NULL; it = it->getNextEdge()) // percorre todas arestas do vertice analisado
             {
-                int verticeAdjacente = it->getTargetId(); //pega o vértice alvo dessa aresta
+                int verticeAdjacente = it->getTargetId(); // pega o vértice alvo dessa aresta
 
-                if (adicionados[verticeAdjacente] == false) //se o vértice alvo não foi adicionado
+                if (adicionados[verticeAdjacente] == false) // se o vértice alvo não foi adicionado
                 {
                     rotulo = it->getRotulo();
-                    vertice1 = verticeAnalisado->getId(); //lembra do nó que esta saindo essa aresta
-                    vertice2 = verticeAdjacente;          //lembra do nó onde esta chegando essa arresta
+                    vertice1 = verticeAnalisado->getId(); // lembra do nó que esta saindo essa aresta
+                    vertice2 = verticeAdjacente;          // lembra do nó onde esta chegando essa arresta
                 }
             }
         }
-        //adiciona uma aresta entre o vértice 1 e 2 que possui custo = menorCusto
+        // adiciona uma aresta entre o vértice 1 e 2 que possui custo = menorCusto
         grafoX->insertEdge(vertice1, vertice2, rotulo);
 
-        vertices.push_front(vertice2); //adiciona o vertice 2 na lista vertices
-        adicionados[vertice2] = true;  //marcar o vertice 2 como adicionado
+        vertices.push_front(vertice2); // adiciona o vertice 2 na lista vertices
+        adicionados[vertice2] = true;  // marcar o vertice 2 como adicionado
         int contador = 0;
-        for (int i = 0; i < (getOrder()); i++) //verificar se todos vértices ja foram adicionados se sim todosVerticesAdicionados=true
+        for (int i = 0; i < (getOrder()); i++) // verificar se todos vértices ja foram adicionados se sim todosVerticesAdicionados=true
         {
             if (adicionados[i] == true)
             {
@@ -803,194 +823,212 @@ Graph *Graph::agmPrim(ofstream &output_file)
     return grafoX;
 }
 
-int Graph::sorteia(int tamanho){
+int Graph::sorteia(int tamanho)
+{
     int valorSort = (int)(rand() % tamanho);
     return valorSort;
 }
 
 Graph *Graph::refinamento(ofstream &output_file)
 {
-    //acha o vértice inicial
-    int menorOutDegree=9999999;
+    // acha o vértice inicial
+    int menorOutDegree = 9999999;
     std::list<int> nodesIniciais;
     std::list<int>::iterator itrBegin, itrLast;
-    for(Node *a = this->getFirstNode(); a!=NULL ; a=a->getNextNode()){//para todos os vértices
-    //acha quais tem o menor Out Degree
-    if(a->getDegree()<menorOutDegree){//se o atual for menor
+    for (Node *a = this->getFirstNode(); a != NULL; a = a->getNextNode())
+    { // para todos os vértices
+        // acha quais tem o menor Out Degree
+        if (a->getDegree() < menorOutDegree)
+        { // se o atual for menor
 
-        //limpa a lista
-        itrBegin= nodesIniciais.begin();
-        itrLast = nodesIniciais.end();
-        nodesIniciais.erase(itrBegin,itrLast);
+            // limpa a lista
+            itrBegin = nodesIniciais.begin();
+            itrLast = nodesIniciais.end();
+            nodesIniciais.erase(itrBegin, itrLast);
 
-        //atualiza o menor OutDegree
-        menorOutDegree=a->getDegree();
+            // atualiza o menor OutDegree
+            menorOutDegree = a->getDegree();
 
-        //Adiciona na lista
-        nodesIniciais.push_back(a->getId());
+            // Adiciona na lista
+            nodesIniciais.push_back(a->getId());
+        }
+        else if (a->getDegree() == menorOutDegree)
+        { // se o atual for igual ao menor
 
-        }else if(a->getDegree()==menorOutDegree){//se o atual for igual ao menor
-
-        //Adiciona na lista
-        nodesIniciais.push_back(a->getId());
-
-        }else{//se o atual for maior que o menor
-
+            // Adiciona na lista
+            nodesIniciais.push_back(a->getId());
+        }
+        else
+        { // se o atual for maior que o menor
         }
     }
 
-    //sorteia entre os menores
-    int numSorteado=sorteia(nodesIniciais.size());
+    // sorteia entre os menores
+    int numSorteado = sorteia(nodesIniciais.size());
 
-    //pega na lista o Node sorteado
-    itrBegin= nodesIniciais.begin();
+    // pega na lista o Node sorteado
+    itrBegin = nodesIniciais.begin();
     advance(itrBegin, numSorteado);
-    Node *noInicial= getNode(*itrBegin);
+    Node *noInicial = getNode(*itrBegin);
 
-    //limpa a lista
-    itrBegin= nodesIniciais.begin();
+    // limpa a lista
+    itrBegin = nodesIniciais.begin();
     itrLast = nodesIniciais.end();
-    nodesIniciais.erase(itrBegin,itrLast);
+    nodesIniciais.erase(itrBegin, itrLast);
 
-    //criar um gravo vazio
+    // criar um gravo vazio
     Graph *grafoX = new Graph(this->getOrder(), 0);
 
-    //adiocionar todos os nós
+    // adiocionar todos os nós
     grafoX->insertAllNodes();
 
-    bool adicionados[this->order]; //marca quais vértices ja possuem um caminho
+    bool adicionados[this->order]; // marca quais vértices ja possuem um caminho
     for (int j = 0; j < this->order; j++)
     {
-        adicionados[j] = false; //inicia todos vértices como não visitados
+        adicionados[j] = false; // inicia todos vértices como não visitados
     }
     bool todosVerticesAdicionados = false;
 
-    //marca o vértice inicial como visitado
-    adicionados[noInicial->getId()]= true;
+    // marca o vértice inicial como visitado
+    adicionados[noInicial->getId()] = true;
 
-    //criar uma lista de de arestas plausiveis (toda vez q um nó for adicionado adicionar todas as arestas dele)
+    // criar uma lista de de arestas plausiveis (toda vez q um nó for adicionado adicionar todas as arestas dele)
     std::list<Edge> arestasPlausiveis;
     std::list<Edge>::iterator itrAresta;
-    for(Edge *c=noInicial->getFirstEdge(); c!=0;c=c->getNextEdge()){
+    for (Edge *c = noInicial->getFirstEdge(); c != 0; c = c->getNextEdge())
+    {
         arestasPlausiveis.push_back(*c);
     }
 
-    //criar um vetor de rotulos ja utilizados
-     bool rotulosAdicionados[this->numeroRotulos]; //marca quais rotulos ja foram adicionados
+    // criar um vetor de rotulos ja utilizados
+    bool rotulosAdicionados[this->numeroRotulos]; // marca quais rotulos ja foram adicionados
     for (int j = 0; j < this->numeroRotulos; j++)
     {
-        rotulosAdicionados[j] = false; //inicia todos rotulos como não adicionados
+        rotulosAdicionados[j] = false; // inicia todos rotulos como não adicionados
     }
 
-    while (todosVerticesAdicionados == false) //repetir até ter um caminho para todos os vértices
+    while (todosVerticesAdicionados == false) // repetir até ter um caminho para todos os vértices
     {
-        bool houveADC=false;
-        //passar pela lista de arestas
-         for (itrAresta = arestasPlausiveis.begin(); itrAresta != arestasPlausiveis.end(); itrAresta++){
+        bool houveADC = false;
+        // passar pela lista de arestas
+        for (itrAresta = arestasPlausiveis.begin(); itrAresta != arestasPlausiveis.end(); itrAresta++)
+        {
 
-            //Se uma aresta chegar até um nó não visitado e usar um rotulo ja utilizado adiciona a aresta e remove ela da lista
-            if(adicionados[itrAresta->getTargetId()]==false){
-                if(rotulosAdicionados[itrAresta->getRotulo()]==true){
-                    grafoX->insertEdge(itrAresta->getOrigemId(),itrAresta->getTargetId(),itrAresta->getRotulo());
+            // Se uma aresta chegar até um nó não visitado e usar um rotulo ja utilizado adiciona a aresta e remove ela da lista
+            if (adicionados[itrAresta->getTargetId()] == false)
+            {
+                if (rotulosAdicionados[itrAresta->getRotulo()] == true)
+                {
+                    grafoX->insertEdge(itrAresta->getOrigemId(), itrAresta->getTargetId(), itrAresta->getRotulo());
                     arestasPlausiveis.erase(itrAresta);
-                    houveADC=true;
-                    adicionados[itrAresta->getTargetId()]=true;
-
-                }else{
-                    
+                    houveADC = true;
+                    adicionados[itrAresta->getTargetId()] = true;
                 }
-            }else if(adicionados[itrAresta->getTargetId()]==true){//Se uma aresta chegar até um nó ja visitado, remove ela da lista
+                else
+                {
+                }
+            }
+            else if (adicionados[itrAresta->getTargetId()] == true)
+            { // Se uma aresta chegar até um nó ja visitado, remove ela da lista
                 arestasPlausiveis.erase(itrAresta);
             }
-            //Se uma aresta chegar até um nó não visitado e usar um rotulo não utilizado, não fazer nada
-         }
-
-        if(!houveADC){//Se Houve a adição de alguma aresta no passo anterior passa direto, caso contrario faça:
-
-        //achar o nó vizinho que menos arestas (do grafo novo) tocam
-        //CRIAR UM VETOR nós vizinhos[this-order]
-        int vizinhos[this->order];
-        //se o nó ja tiver sido adicionado vizinhos[i]=9999999
-        for (int i = 0; i < this->order; i++)
-        {
-            if(adicionados[i]=true){
-                vizinhos[i]=9999999;
-            }else{//se o nó n tiver sido adicionado vizinhos[i]=0
-                adicionados[i]=0;
-            }
-        }
-        //passar por todas arestas da lista, toda vez que passar por uma aresta somar 1 no vizinho[targetid] correspondente
-        for (itrAresta = arestasPlausiveis.begin(); itrAresta != arestasPlausiveis.end(); itrAresta++){
-            vizinhos[itrAresta->getTargetId()]++;
+            // Se uma aresta chegar até um nó não visitado e usar um rotulo não utilizado, não fazer nada
         }
 
+        if (!houveADC)
+        { // Se Houve a adição de alguma aresta no passo anterior passa direto, caso contrario faça:
 
-
-        for (int i = 0; i < this->order; i++)
-        {
-            if(adicionados[i]=true){
-                vizinhos[i]=9999999;
-            }else{//se o nó n tiver sido adicionado vizinhos[i]=0
-                adicionados[i]=0;
-            }
-        }
-
-        std::list<int> vizinhosASortear;
-        std::list<int>::iterator itrBegin2, itrLast2;
-        int menorVizinho=9999999;
-
-        for (int i = 0; i < this->order; i++)//acha os menores vizinhos
-        {
-            if(vizinhos[i]<menorVizinho && vizinhos[i]!=0){//se achar um vizinho menor
-                menorVizinho=vizinhos[i];//atualiza o menor vizinho
-                //apaga a lista
-                itrBegin2= vizinhosASortear.begin();
-                itrLast2 = vizinhosASortear.end();
-                vizinhosASortear.erase(itrBegin,itrLast);
-                //adiciona o novo menor valor na lista
-                vizinhosASortear.push_back(i);
-            } else if(vizinhos[i]==menorVizinho && vizinhos[i]!=0){//se achar um vizinho igual
-                vizinhosASortear.push_back(i);
+            // achar o nó vizinho que menos arestas (do grafo novo) tocam
+            // CRIAR UM VETOR nós vizinhos[this-order]
+            int vizinhos[this->order];
+            // se o nó ja tiver sido adicionado vizinhos[i]=9999999
+            for (int i = 0; i < this->order; i++)
+            {
+                if (adicionados[i] = true)
+                {
+                    vizinhos[i] = 9999999;
                 }
-        }
-
-        //sortear um dos vizinhos de menor arestas
-        int numSorteado2=sorteia(vizinhosASortear.size());
-        int vizinhoEscolhido;
-
-        //pega na lista o Node sorteado
-        itrBegin2= vizinhosASortear.begin();
-        advance(itrBegin2, numSorteado2);
-        vizinhoEscolhido=*itrBegin2;
-
-
-        std::list<Edge> arestasASortear;
-        std::list<Edge>::iterator itrBegin3, itrLast3;
-
-        //sortear uma das arestas adicionar ela no grafo, removendo ela da lista e atualizando os rotulos
-        for (itrAresta = arestasPlausiveis.begin(); itrAresta != arestasPlausiveis.end(); itrAresta++){
-            if(itrAresta->getTargetId() == vizinhoEscolhido){
-                arestasASortear.push_back(*itrAresta);
+                else
+                { // se o nó n tiver sido adicionado vizinhos[i]=0
+                    adicionados[i] = 0;
+                }
             }
+            // passar por todas arestas da lista, toda vez que passar por uma aresta somar 1 no vizinho[targetid] correspondente
+            for (itrAresta = arestasPlausiveis.begin(); itrAresta != arestasPlausiveis.end(); itrAresta++)
+            {
+                vizinhos[itrAresta->getTargetId()]++;
+            }
+
+            for (int i = 0; i < this->order; i++)
+            {
+                if (adicionados[i] = true)
+                {
+                    vizinhos[i] = 9999999;
+                }
+                else
+                { // se o nó n tiver sido adicionado vizinhos[i]=0
+                    adicionados[i] = 0;
+                }
+            }
+
+            std::list<int> vizinhosASortear;
+            std::list<int>::iterator itrBegin2, itrLast2;
+            int menorVizinho = 9999999;
+
+            for (int i = 0; i < this->order; i++) // acha os menores vizinhos
+            {
+                if (vizinhos[i] < menorVizinho && vizinhos[i] != 0)
+                {                               // se achar um vizinho menor
+                    menorVizinho = vizinhos[i]; // atualiza o menor vizinho
+                    // apaga a lista
+                    itrBegin2 = vizinhosASortear.begin();
+                    itrLast2 = vizinhosASortear.end();
+                    vizinhosASortear.erase(itrBegin, itrLast);
+                    // adiciona o novo menor valor na lista
+                    vizinhosASortear.push_back(i);
+                }
+                else if (vizinhos[i] == menorVizinho && vizinhos[i] != 0)
+                { // se achar um vizinho igual
+                    vizinhosASortear.push_back(i);
+                }
+            }
+
+            // sortear um dos vizinhos de menor arestas
+            int numSorteado2 = sorteia(vizinhosASortear.size());
+            int vizinhoEscolhido;
+
+            // pega na lista o Node sorteado
+            itrBegin2 = vizinhosASortear.begin();
+            advance(itrBegin2, numSorteado2);
+            vizinhoEscolhido = *itrBegin2;
+
+            std::list<Edge> arestasASortear;
+            std::list<Edge>::iterator itrBegin3, itrLast3;
+
+            // sortear uma das arestas adicionar ela no grafo, removendo ela da lista e atualizando os rotulos
+            for (itrAresta = arestasPlausiveis.begin(); itrAresta != arestasPlausiveis.end(); itrAresta++)
+            {
+                if (itrAresta->getTargetId() == vizinhoEscolhido)
+                {
+                    arestasASortear.push_back(*itrAresta);
+                }
+            }
+
+            // sortear uma das arestas
+            int numSorteado3 = sorteia(arestasASortear.size());
+
+            // pega na lista a aresta sorteada
+            itrBegin3 = arestasASortear.begin();
+            advance(itrBegin3, numSorteado2);
+
+            // adiciona a arresta sorteada
+            insertEdge(itrBegin3->getOrigemId(), itrBegin3->getTargetId(), itrBegin3->getRotulo());
+            adicionados[itrBegin3->getTargetId()] = true;
+            rotulosAdicionados[itrBegin3->getRotulo()] = true;
         }
-        
-        //sortear uma das arestas
-        int numSorteado3=sorteia(arestasASortear.size());
-
-        //pega na lista a aresta sorteada
-        itrBegin3= arestasASortear.begin();
-        advance(itrBegin3, numSorteado2);
-
-        //adiciona a arresta sorteada
-        insertEdge(itrBegin3->getOrigemId(),itrBegin3->getTargetId(),itrBegin3->getRotulo());
-        adicionados[itrBegin3->getTargetId()]=true;
-        rotulosAdicionados[itrBegin3->getRotulo()]=true;
-        }
-
-
 
         int contador = 0;
-        for (int i = 0; i < (getOrder()); i++) //verificar se todos vértices ja foram adicionados se sim todosVerticesAdicionados=true
+        for (int i = 0; i < (getOrder()); i++) // verificar se todos vértices ja foram adicionados se sim todosVerticesAdicionados=true
         {
             if (adicionados[i] == true)
             {
@@ -1004,3 +1042,4 @@ Graph *Graph::refinamento(ofstream &output_file)
     }
     return grafoX;
 }
+
