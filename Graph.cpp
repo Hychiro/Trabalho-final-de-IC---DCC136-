@@ -176,6 +176,7 @@ void Graph::insertEdge(int id, int target_id, int rotulo)
             Node *sup = getNode(target_id);
             p->insertEdge(target_id, rotulo);
             sup->insertEdge(id, rotulo);
+            getNode(target_id)->incrementDegree();
             this->number_edges += 1;
 
             bool found = (std::find(rotulos.begin(), rotulos.end(), rotulo) != rotulos.end());
@@ -767,8 +768,8 @@ Graph *Graph::agmPrim(ofstream &output_file)
         int rotulo;
         for (k = vertices.begin(); k != vertices.end(); k++) //percorre todos vértices da lista
         {
-            Node *verticeAnalisado = grafoVI->getNode(*k);
-            for (Edge *it = verticeAnalisado->getFirstEdge(); it != NULL; it = it->getNextEdge()) //percorre todas arestas de grafoVI
+            Node *verticeAnalisado = grafoVI->getNode(*k);//vertice analisado
+            for (Edge *it = verticeAnalisado->getFirstEdge(); it != NULL; it = it->getNextEdge()) //percorre todas arestas do vertice analisado
             {
                 int verticeAdjacente = it->getTargetId(); //pega o vértice alvo dessa aresta
 
@@ -801,4 +802,211 @@ Graph *Graph::agmPrim(ofstream &output_file)
     delete[] listaNos;
 
     return grafoX;
+}
+
+int Graph::sorteia(int tamanho){
+    int valorSort = (int)(rand() % tamanho);
+}
+
+Graph *Graph::refinamento(ofstream &output_file)
+{
+    bool adicionados[this->order]; //marca quais vértices ja possuem um caminho
+    for (int j = 0; j < this->order; j++)
+    {
+        adicionados[j] = false; //inicia todos vértices como não visitados
+    }
+    bool todosVerticesAdicionados = false;
+
+    //acha o vértice inicial
+    int menorOutDegree=9999999;
+    std::list<int> nodesIniciais;
+    std::list<int>::iterator itrBegin, itrLast;
+    for(Node *a = this->getFirstNode(); a!=NULL ; a=a->getNextNode()){//para todos os vértices
+    //acha quais tem o menor Out Degree
+    if(a->getDegree()<menorOutDegree){//se o atual for menor
+
+        //limpa a lista
+        itrBegin= nodesIniciais.begin();
+        itrLast = nodesIniciais.end();
+        nodesIniciais.erase(itrBegin,itrLast);
+
+        //atualiza o menor OutDegree
+        menorOutDegree=a->getDegree();
+
+        //Adiciona na lista
+        nodesIniciais.push_back(a->getId());
+
+        }else if(a->getDegree()==menorOutDegree){//se o atual for igual ao menor
+
+        //Adiciona na lista
+        nodesIniciais.push_back(a->getId());
+
+        }else{//se o atual for maior que o menor
+
+        }
+    }
+
+    //sorteia entre os menores
+    int numSorteado=sorteia(nodesIniciais.size());
+
+    //pega na lista o Node sorteado
+    itrBegin= nodesIniciais.begin();
+    advance(itrBegin, numSorteado);
+    Node *noInicial= getNode(*itrBegin);
+
+    //limpa a lista
+    itrBegin= nodesIniciais.begin();
+    itrLast = nodesIniciais.end();
+    nodesIniciais.erase(itrBegin,itrLast);
+
+    //criar um gravo vazio
+    Graph *grafoX = new Graph(this->getOrder(), 0);
+
+    //adiocionar todos os nós
+    grafoX->insertAllNodes();
+
+    bool adicionados[this->order]; //marca quais vértices ja possuem um caminho
+    for (int j = 0; j < this->order; j++)
+    {
+        adicionados[j] = false; //inicia todos vértices como não visitados
+    }
+    bool todosVerticesAdicionados = false;
+
+    //marca o vértice inicial como visitado
+    adicionados[noInicial->getId()]= true;
+
+    //criar uma lista de de arestas plausiveis (toda vez q um nó for adicionado adicionar todas as arestas dele)
+    std::list<Edge> arestasPlausiveis;
+    std::list<Edge>::iterator itrAresta;
+    for(Edge *c=noInicial->getFirstEdge(); c!=0;c=c->getNextEdge()){
+        arestasPlausiveis.push_back(*c);
+    }
+
+    //criar um vetor de rotulos ja utilizados
+     bool rotulosAdicionados[this->numeroRotulos]; //marca quais rotulos ja foram adicionados
+    for (int j = 0; j < this->numeroRotulos; j++)
+    {
+        rotulosAdicionados[j] = false; //inicia todos rotulos como não adicionados
+    }
+
+    while (todosVerticesAdicionados == false) //repetir até ter um caminho para todos os vértices
+    {
+        bool houveADC=false;
+        //passar pela lista de arestas
+         for (itrAresta = arestasPlausiveis.begin(); itrAresta != arestasPlausiveis.end(); itrAresta++){
+
+            //Se uma aresta chegar até um nó não visitado e usar um rotulo ja utilizado adiciona a aresta e remove ela da lista
+            if(adicionados[itrAresta->getTargetId()]==false){
+                if(rotulosAdicionados[itrAresta->getRotulo()]==true){
+                    grafoX->insertEdge(itrAresta->getOrigemId(),itrAresta->getTargetId(),itrAresta->getRotulo());
+                    arestasPlausiveis.erase(itrAresta);
+                    houveADC=true;
+                    adicionados[itrAresta->getTargetId()]=true;
+
+                }else{
+                    
+                }
+            }else if(adicionados[itrAresta->getTargetId()]==true){//Se uma aresta chegar até um nó ja visitado, remove ela da lista
+                arestasPlausiveis.erase(itrAresta);
+            }
+            //Se uma aresta chegar até um nó não visitado e usar um rotulo não utilizado, não fazer nada
+         }
+
+        if(!houveADC){//Se Houve a adição de alguma aresta no passo anterior passa direto, caso contrario faça:
+
+        //achar o nó vizinho que menos arestas (do grafo novo) tocam
+        //CRIAR UM VETOR nós vizinhos[this-order]
+        int vizinhos[this->order];
+        //se o nó ja tiver sido adicionado vizinhos[i]=9999999
+        for (int i = 0; i < this->order; i++)
+        {
+            if(adicionados[i]=true){
+                vizinhos[i]=9999999;
+            }else{//se o nó n tiver sido adicionado vizinhos[i]=0
+                adicionados[i]=0;
+            }
+        }
+        //passar por todas arestas da lista, toda vez que passar por uma aresta somar 1 no vizinho[targetid] correspondente
+        for (itrAresta = arestasPlausiveis.begin(); itrAresta != arestasPlausiveis.end(); itrAresta++){
+            vizinhos[itrAresta->getTargetId()]++;
+        }
+
+
+
+        for (int i = 0; i < this->order; i++)
+        {
+            if(adicionados[i]=true){
+                vizinhos[i]=9999999;
+            }else{//se o nó n tiver sido adicionado vizinhos[i]=0
+                adicionados[i]=0;
+            }
+        }
+
+        std::list<int> vizinhosASortear;
+        std::list<int>::iterator itrBegin2, itrLast2;
+        int menorVizinho=9999999;
+
+        for (int i = 0; i < this->order; i++)//acha os menores vizinhos
+        {
+            if(vizinhos[i]<menorVizinho && vizinhos[i]!=0){//se achar um vizinho menor
+                menorVizinho=vizinhos[i];//atualiza o menor vizinho
+                //apaga a lista
+                itrBegin2= vizinhosASortear.begin();
+                itrLast2 = vizinhosASortear.end();
+                vizinhosASortear.erase(itrBegin,itrLast);
+                //adiciona o novo menor valor na lista
+                vizinhosASortear.push_back(i);
+            } else if(vizinhos[i]==menorVizinho && vizinhos[i]!=0){//se achar um vizinho igual
+                vizinhosASortear.push_back(i);
+                }
+        }
+
+        //sortear um dos vizinhos de menor arestas
+        int numSorteado2=sorteia(vizinhosASortear.size());
+        int vizinhoEscolhido;
+
+        //pega na lista o Node sorteado
+        itrBegin2= vizinhosASortear.begin();
+        advance(itrBegin2, numSorteado2);
+        vizinhoEscolhido=*itrBegin2;
+
+
+        std::list<Edge> arestasASortear;
+        std::list<Edge>::iterator itrBegin3, itrLast3;
+
+        //sortear uma das arestas adicionar ela no grafo, removendo ela da lista e atualizando os rotulos
+        for (itrAresta = arestasPlausiveis.begin(); itrAresta != arestasPlausiveis.end(); itrAresta++){
+            if(itrAresta->getTargetId() == vizinhoEscolhido){
+                arestasASortear.push_back(*itrAresta);
+            }
+        }
+        
+        //sortear uma das arestas
+        int numSorteado3=sorteia(arestasASortear.size());
+
+        //pega na lista a aresta sorteada
+        itrBegin3= arestasASortear.begin();
+        advance(itrBegin3, numSorteado2);
+
+        //adiciona a arresta sorteada
+        insertEdge(itrBegin3->getOrigemId(),itrBegin3->getTargetId(),itrBegin3->getRotulo());
+        adicionados[itrBegin3->getTargetId()]=true;
+        rotulosAdicionados[itrBegin3->getRotulo()]=true;
+        }
+
+
+
+        int contador = 0;
+        for (int i = 0; i < (getOrder()); i++) //verificar se todos vértices ja foram adicionados se sim todosVerticesAdicionados=true
+        {
+            if (adicionados[i] == true)
+            {
+                contador++;
+            }
+        }
+        if (contador == (this->order))
+        {
+            todosVerticesAdicionados = true;
+        }
+    }
 }

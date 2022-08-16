@@ -32,6 +32,7 @@ private:
     int numeroRotulos;
 
 public:
+
     int melhorInstancia;
     //Constructor
     Graph(int order, int numeroRotulos);
@@ -39,6 +40,8 @@ public:
     ~Graph();
     //Getters
     int getOrder();
+    int sorteia(int tamanho);
+    Graph* refinamento(ofstream &output_file);
     int getNumberEdges();
     Node *getFirstNode();
     Node *getLastNode();

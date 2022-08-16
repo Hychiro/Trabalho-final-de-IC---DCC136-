@@ -16,8 +16,7 @@ using namespace std;
 Node::Node(int id){
 
     this->id = id;
-    this->in_degree = 0;
-    this->out_degree = 0;
+    this->degree = 0;
     this->weight = 0;
     this->first_edge = NULL;
     this->last_edge = NULL;
@@ -59,17 +58,12 @@ int Node::getId(){
 
 }
 
-int Node::getInDegree(){
+int Node::getDegree(){
 
-    return this->in_degree;
-
-}
-
-int Node::getOutDegree(){
-
-    return this->out_degree;
+    return this->degree;
 
 }
+
 
 float Node::getWeight(){
 
@@ -98,17 +92,21 @@ void Node::insertEdge(int target_id, int rotulo){
     // Verifies whether there are at least one edge in the node
     if(this->first_edge != NULL){
         // Allocating the new edge and keeping the integrity of the edge list
-        Edge* edge = new Edge(target_id);
+        Edge* edge = new Edge(target_id, this->getId());
         edge->setRotulo(rotulo);
         this->last_edge->setNextEdge(edge);
         this->last_edge = edge;
+        this->incrementDegree();
+        //getNode(target_id)->incrementInDegree();
 
     }
     else{
          // Allocating the new edge and keeping the integrity of the edge list
-        this->first_edge = new Edge(target_id);
+        this->first_edge = new Edge(target_id, this->getId());
         this->first_edge->setRotulo(rotulo);
         this->last_edge = this->first_edge;
+        this->incrementDegree();
+        //getNode(target_id)->incrementInDegree();
 
     }
 
@@ -129,6 +127,7 @@ void Node::removeAllEdges(){
         }
 
     }
+    this->degree=0;
 
     this->first_edge = this->last_edge = NULL;
 
@@ -162,15 +161,17 @@ int Node::removeEdge(int id, bool directed, Node* target_node){
 
         delete aux;
         // Verifies whether the graph is directed
-        if(directed)
-            this->decrementOutDegree();
+        //if(directed)
+        //    this->decrementOutDegree();
 
-        else{
+        //else{
 
-            this->decrementInDegree();
-            target_node->decrementInDegree();
+        //    this->decrementInDegree();
+        //    target_node->decrementInDegree();
 
-        }
+        //}
+        this->decrementDegree();
+        //getNode(target_node->getTargetId())->decrementInDegree();
 
         return 1;
 
@@ -194,29 +195,18 @@ bool Node::searchEdge(int target_id){
 
 }
 
-void Node::incrementInDegree(){
+void Node::incrementDegree(){
 
-    this->in_degree++;
-
-}
-
-void Node::incrementOutDegree(){
-
-    this->out_degree++;
+    this->degree++;
 
 }
 
-void Node::decrementInDegree(){
+void Node::decrementDegree(){
 
-    this->in_degree--;
-
-}
-
-void Node::decrementOutDegree(){
-
-    this->out_degree--;
+    this->degree--;
 
 }
+
 
 Edge* Node::hasEdgeBetween(int target_id)
 {

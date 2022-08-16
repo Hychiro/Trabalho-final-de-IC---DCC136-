@@ -12,8 +12,9 @@ using namespace std;
 **************************************************************************************************/
 
 // Constructor
-Edge::Edge(int target_id){
+Edge::Edge(int target_id, int origem_id){
 
+    this->origem_id = origem_id;
     this->target_id = target_id;
     this->next_edge = NULL;
     this->rotulo = NULL;
@@ -49,11 +50,19 @@ int Edge::getRotulo(){
 
 }
 
+int Edge::getOrigemId(){
+    return this->origem_id;
+}
+
 // Setters
 void Edge::setNextEdge(Edge* edge){
 
     this->next_edge = edge;
 
+}
+
+void Edge::setOrigemId(int id){
+    this->origem_id = id;
 }
 
 void Edge::setRotulo(int rotulo){

@@ -20,8 +20,7 @@ class Node{
         Edge* first_edge;
         Edge* last_edge;
         int id;
-        unsigned int in_degree;
-        unsigned int out_degree;
+        int degree;
         float weight;
         Node* next_node;
 
@@ -34,8 +33,7 @@ class Node{
         Edge* getFirstEdge();
         Edge* getLastEdge();
         int getId();
-        int getInDegree();
-        int getOutDegree();
+        int getDegree();
         float getWeight();
         Node* getNextNode();
         // Setters
@@ -46,10 +44,8 @@ class Node{
         void insertEdge(int target_id, int rotulo);
         void removeAllEdges();
         int removeEdge(int id, bool directed, Node* target_node);
-        void incrementOutDegree();
-        void decrementOutDegree();
-        void incrementInDegree();
-        void decrementInDegree();
+        void incrementDegree();
+        void decrementDegree();
         Edge* hasEdgeBetween(int target_id);
         // Auxiliar methods
 
