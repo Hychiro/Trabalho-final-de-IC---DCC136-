@@ -27,7 +27,6 @@ using namespace std;
 // Constructor
 Graph::Graph(int order, int numeroRotulos)
 {
-
     this->order = order;
     this->conexGraph = false;
     this->first_node = NULL;
@@ -806,17 +805,11 @@ Graph *Graph::agmPrim(ofstream &output_file)
 
 int Graph::sorteia(int tamanho){
     int valorSort = (int)(rand() % tamanho);
+    return valorSort;
 }
 
 Graph *Graph::refinamento(ofstream &output_file)
 {
-    bool adicionados[this->order]; //marca quais vértices ja possuem um caminho
-    for (int j = 0; j < this->order; j++)
-    {
-        adicionados[j] = false; //inicia todos vértices como não visitados
-    }
-    bool todosVerticesAdicionados = false;
-
     //acha o vértice inicial
     int menorOutDegree=9999999;
     std::list<int> nodesIniciais;
@@ -1009,4 +1002,5 @@ Graph *Graph::refinamento(ofstream &output_file)
             todosVerticesAdicionados = true;
         }
     }
+    return grafoX;
 }
