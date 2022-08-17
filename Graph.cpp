@@ -879,9 +879,9 @@ Graph *Graph::refinamento(ofstream &output_file, Graph *grafo)
 
     for (Edge *c = noInicial->getFirstEdge(); c != 0; c = c->getNextEdge())
     {
-       arestasPlausiveis.push_back(c->getTargetId());
-       arestasPlausiveis.push_back(c->getOrigemId());
-       arestasPlausiveis.push_back(c->getRotulo());
+        arestasPlausiveis.push_back(c->getTargetId());
+        arestasPlausiveis.push_back(c->getOrigemId());
+        arestasPlausiveis.push_back(c->getRotulo());
     }
 
     // criar um vetor de rotulos ja utilizados
@@ -904,15 +904,15 @@ Graph *Graph::refinamento(ofstream &output_file, Graph *grafo)
         // passar pela lista de arestas
         for (itrAresta = arestasPlausiveis.begin(); itrAresta != arestasPlausiveis.end(); itrAresta++)
         {
-            int targetID=*itrAresta;
+            int targetID = *itrAresta;
             itrAresta++;
-            int origemID=*itrAresta;
+            int origemID = *itrAresta;
             itrAresta++;
-            int rotulo=*itrAresta;
-            if (adicionados[targetID] == true && rAdc[rotulo]== true)
+            int rotulo = *itrAresta;
+            if (adicionados[targetID] == true && rAdc[rotulo] == true)
             { // Se uma aresta chegar até um nó ja visitado, usando um rotulo ja utilizado adiciona ela no grafo
-                    grafoX->insertEdge(origemID, targetID, rotulo);
-                    grafoX->insertEdge(targetID, origemID, rotulo);
+                grafoX->insertEdge(origemID, targetID, rotulo);
+                grafoX->insertEdge(targetID, origemID, rotulo);
             }
 
             // Se uma aresta chegar até um nó não visitado e usar um rotulo ja utilizado adiciona a aresta e remove ela da lista
@@ -965,11 +965,11 @@ Graph *Graph::refinamento(ofstream &output_file, Graph *grafo)
             // passar por todas arestas da lista, toda vez que passar por uma aresta somar 1 no vizinho[targetid] correspondente
             for (itrAresta = arestasPlausiveis.begin(); itrAresta != arestasPlausiveis.end(); itrAresta++)
             {
-                int targetID=*itrAresta;
+                int targetID = *itrAresta;
                 itrAresta++;
-                int origemID=*itrAresta;
+                int origemID = *itrAresta;
                 itrAresta++;
-                int rotulo=*itrAresta;
+                int rotulo = *itrAresta;
                 // cout << "vizinho " << itrAresta->getTargetId() << " possui " << vizinhos[itrAresta->getTargetId()] + 1 << " arestas" << endl;
                 vizinhos[targetID]++;
             }
@@ -1016,11 +1016,11 @@ Graph *Graph::refinamento(ofstream &output_file, Graph *grafo)
             // sortear uma das arestas adicionar ela no grafo, removendo ela da lista e atualizando os rotulos
             for (itrAresta = arestasPlausiveis.begin(); itrAresta != arestasPlausiveis.end(); itrAresta++) // passo por todas arestas plausiveis
             {
-                int targetID=*itrAresta;
+                int targetID = *itrAresta;
                 itrAresta++;
-                int origemID=*itrAresta;
+                int origemID = *itrAresta;
                 itrAresta++;
-                int rotulo=*itrAresta;
+                int rotulo = *itrAresta;
                 if (targetID == vizinhoEscolhido) // se essa aresta toca no vértice sorteado
                 {
                     // cout << "Aresta " << itrAresta->getOrigemId() << " -- " << itrAresta->getTargetId() << " adicionada para o sorteio" << endl;
@@ -1033,12 +1033,12 @@ Graph *Graph::refinamento(ofstream &output_file, Graph *grafo)
 
             // sortear uma das arestas
 
-            int numSorteado3 = sorteia(arestasASortear.size()/3);
+            int numSorteado3 = sorteia(arestasASortear.size() / 3);
 
             // pega na lista a aresta sorteada
             itrBegin3 = arestasASortear.begin();
 
-            advance(itrBegin3, numSorteado3*3);
+            advance(itrBegin3, numSorteado3 * 3);
 
             int targetID = *itrBegin3;
             itrBegin3++;
@@ -1060,10 +1060,10 @@ Graph *Graph::refinamento(ofstream &output_file, Graph *grafo)
 
             for (Edge *c = this->getNode(targetID)->getFirstEdge(); c != 0; c = c->getNextEdge())
             {
-                
-            arestasPlausiveis.push_back(c->getTargetId());
-            arestasPlausiveis.push_back(c->getOrigemId());
-            arestasPlausiveis.push_back(c->getRotulo());
+
+                arestasPlausiveis.push_back(c->getTargetId());
+                arestasPlausiveis.push_back(c->getOrigemId());
+                arestasPlausiveis.push_back(c->getRotulo());
             }
 
             itrBegin3 = arestasASortear.begin();
@@ -1089,25 +1089,26 @@ Graph *Graph::refinamento(ofstream &output_file, Graph *grafo)
     arestasASortear.clear();
     vizinhosASortear.clear();
 
-    cout << "retorna" << endl;
+    //cout << "retorna" << endl;
     return grafoX;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Graph *Graph::buscaLocalAleatoria(Graph *grafo, ofstream &output_file)
 {
-    
+
     Graph *novoGrafo = grafo;
-    
-    cout << "teste 2.1" << endl;
+
+    // cout << "teste 2.1" << endl;
     int rotuloAleatorio = novoGrafo->buscaRotuloAleatorio(this->numeroRotulos);
 
-    cout << "teste 2.2" << endl;
+    // cout << "teste 2.2" << endl;
     adicionaRotulo(rotuloAleatorio, novoGrafo, this);
     //////
-    cout << "teste 2.3" << endl;
+    // cout << "teste 2.3" << endl;
     Graph *solucao = novoGrafo->refinamento(output_file, this);
-    cout << "teste 2.4" << endl;
+    // cout << "teste 2.4" << endl;
+
     if (grafo->getNumRotulos() >= solucao->getNumRotulos())
     {
         return solucao;
@@ -1120,12 +1121,15 @@ Graph *Graph::buscaLocalAleatoria(Graph *grafo, ofstream &output_file)
 }
 Graph *Graph::realizaPertubacao(Graph *grafo)
 {
-    cout << "teste 2.1" << endl;
-    cout << "num rotulos 2.1: " << grafo->getNumRotulos() << endl;
-    int rotuloAleatorio = grafo->buscaRotuloAleatorio(this->getNumRotulos());
-    cout << "num de rot " << rotuloAleatorio << endl;
-    adicionaRotulo(rotuloAleatorio, grafo, this);
-    cout << "num rotulos 2.2: " << grafo->getNumRotulos() << endl;
+    for (int i = 0; i < 5; i++)
+    {
+        // cout << "teste 2.1" << endl;
+        // cout << "num rotulos 2.1: " << grafo->getNumRotulos() << endl;
+        int rotuloAleatorio = grafo->buscaRotuloAleatorio(this->getNumRotulos());
+        // cout << "num de rot " << rotuloAleatorio << endl;
+        adicionaRotulo(rotuloAleatorio, grafo, this);
+        // cout << "num rotulos 2.2: " << grafo->getNumRotulos() << endl;
+    }
     return grafo;
 }
 int Graph::buscaRotuloAleatorio(int numRotTOTAL)
@@ -1137,7 +1141,7 @@ int Graph::buscaRotuloAleatorio(int numRotTOTAL)
     while (found)
     {
         rotuloAleatorio = rand() % numRotTOTAL;
-        cout << "rotuloAleatorio " << rotuloAleatorio << endl;
+        // cout << "rotuloAleatorio " << rotuloAleatorio << endl;
         found = (std::find(rotulos.begin(), rotulos.end(), rotuloAleatorio) != rotulos.end());
     }
     return rotuloAleatorio;
@@ -1167,7 +1171,7 @@ Graph *Graph::preencheGraph(Graph *grafo)
             {
                 if (!grafo->verificaAresta(grafoNode->getId(), q->getTargetId()))
                 {
-                    grafoNode->insertEdge( q->getTargetId(), q->getRotulo());
+                    grafoNode->insertEdge(q->getTargetId(), q->getRotulo());
                 }
             }
             //
@@ -1177,32 +1181,48 @@ Graph *Graph::preencheGraph(Graph *grafo)
 }
 Graph *Graph::ils(ofstream &output_file)
 {
-    Graph *novoGraph = guloso(output_file);
-    Graph *melhorSol = novoGraph;
-    int x = 30;
+    Graph *novoGraph;
+    Graph *melhorSol;
+    for (int i = 0; i < 30; i++)
+    {
+        novoGraph = gulosoRandomizado(0.1, output_file);
+        if (i == 0)
+        {
+            melhorSol = novoGraph;
+        }
+        else
+        {
+            if (novoGraph->getNumRotulos() < melhorSol->getNumRotulos())
+            {
+                melhorSol = novoGraph;
+            }
+        }
+    }
+
+    int x = 100;
     int j = 0;
 
-    cout << "teste 1" << endl;
+    // cout << "teste 1" << endl;
     for (int i = 0; i < x; i++)
     {
-
+        j = 0;
         while (j < x)
         {
 
-            cout << "teste 2" << endl;
+            // cout << "teste 2" << endl;
             novoGraph = this->buscaLocalAleatoria(novoGraph, output_file);
 
             if (melhorSol->getNumRotulos() > novoGraph->getNumRotulos())
             {
-                cout << "teste 3" << endl;
+                // cout << "teste 3" << endl;
                 melhorSol = novoGraph;
             }
-            //novoGraph = this->preencheGraph(novoGraph);
+            // novoGraph = this->preencheGraph(novoGraph);
             j++;
         }
 
         novoGraph = this->realizaPertubacao(novoGraph);
     }
-    cout << "teste 4" << endl;
+    // cout << "teste 4" << endl;
     return melhorSol;
 }

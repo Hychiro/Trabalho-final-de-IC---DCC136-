@@ -23,13 +23,13 @@ using namespace std;
 Graph *leituraInstancia(ifstream &input_file, ofstream &output_file)
 {
 
-    //Variáveis para auxiliar na criação dos nós no Grafo
+    // Variáveis para auxiliar na criação dos nós no Grafo
 
     int order;
     int numeroRotulos;
     int numeroRotulosTotais;
 
-    //Pegando a ordem do grafo
+    // Pegando a ordem do grafo
     input_file >> order >> numeroRotulosTotais;
     int matrixCorAresta[order][order];
 
@@ -40,11 +40,11 @@ Graph *leituraInstancia(ifstream &input_file, ofstream &output_file)
             matrixCorAresta[k][j] = -1;
         }
     }
-    //Criando objeto grafo
+    // Criando objeto grafo
     Graph *graph = new Graph(order, numeroRotulosTotais);
     int coluna = 1;
     int linha = 0;
-    //Leitura de arquivo
+    // Leitura de arquivo
     while (input_file >> numeroRotulos)
     {
 
@@ -73,11 +73,10 @@ Graph *leituraInstancia(ifstream &input_file, ofstream &output_file)
     {
         for (int p = 0; p < order; p++)
         {
-            
+
             if (matrixCorAresta[o][p] != -1 && matrixCorAresta[o][p] < numeroRotulosTotais)
             {
                 graph->insertEdge(o, p, matrixCorAresta[o][p]);
-               
             }
         }
     }
@@ -92,11 +91,11 @@ int menu()
 
     cout << "MENU" << endl;
     cout << "----" << endl;
-    cout << "[1] Algoritmo Guloso" << endl;
+    cout << "[1] Algoritmo GLS" << endl;
     cout << "[2] Algoritmo Guloso Randomizado" << endl;
     cout << "[3] Algoritmo Guloso Randomizado Reativo" << endl;
     cout << "[4] Printando o Grafo " << endl;
-    cout << "[5] Densidade de Arestas do Grafo "<<endl;
+    cout << "[5] Densidade de Arestas do Grafo " << endl;
     cout << "[0] Sair" << endl;
 
     cin >> selecao;
@@ -109,41 +108,50 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
 
     switch (selecao)
     {
-    //Algoritmo Guloso;
+    // Algoritmo Guloso;
     case 1:
     {
-        srand((unsigned)time(NULL));
-        for(int i=0;i<100;i++){
         int clo = clock();
-        
-        output_file << "Algoritmo Guloso" << endl;
+        srand((unsigned)time(NULL));
+         Graph *melhorSol;
+        for (int i = 0; i < 100; i++)
+        {
+            
 
-        //Graph * novoGraph = graph->ils(output_file);
-        Graph *novoGrafo;
-        Graph *ag;
+            output_file << "Algoritmo Guloso" << endl;
 
-        novoGrafo = graph->guloso(output_file);
+            Graph *novoGraph = graph->ils(output_file);
+           
+            if (i == 0)
+            {
+                melhorSol = novoGraph;
+            }
+            else
+            {
+                if (novoGraph->getNumRotulos() < melhorSol->getNumRotulos())
+                {
+                    melhorSol = novoGraph;
+                }
+            }
+            // novoGrafo = graph->guloso(output_file);
 
+            // cout<<"pre refinamento"<<endl;
 
-        cout<<"pre refinamento"<<endl;
+            // ag = novoGrafo->refinamento(output_file, graph);
 
-        ag = novoGrafo->refinamento(output_file, graph);
+            // cout<<"pos refinamento"<<endl;
 
-        cout<<"pos refinamento"<<endl;
-        
+            output_file << "Quantidade minima de rotulos: " << novoGraph->getNumRotulos() << endl;
 
-
-
-    
-        output_file << "Quantidade minima de rotulos: " << ag->getNumRotulos() << endl;
-        
-
-        output_file<<"tempo de execucao: "<<(clock() - clo)<<" millisegundos"<<endl;
-        ag->printGraph(output_file);
+           
+            //novoGraph->printGraph(output_file);
         }
+        output_file << "Melhor Quantidade minima de rotulos: " << melhorSol->getNumRotulos() << endl;
+
+         output_file << "tempo de execucao: " << (clock() - clo) << " millisegundos" << endl;
         break;
     }
-    //Algoritmo Guloso Randomizado;
+    // Algoritmo Guloso Randomizado;
     case 2:
     {
         output_file << "Algoritmo Guloso Radomizado" << endl;
@@ -157,37 +165,33 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
         cin >> numdInteracoes;
         srand((unsigned)time(NULL));
 
-        //typedef std::chrono::high_resolution_clock Clock;
-        //typedef std::chrono::milliseconds milliseconds;
-        //Clock::time_point t0 = Clock::now();
+        // typedef std::chrono::high_resolution_clock Clock;
+        // typedef std::chrono::milliseconds milliseconds;
+        // Clock::time_point t0 = Clock::now();
         int clo = clock();
 
         Graph *novoGrafo = graph->gulosoRandomizadoAux(alfa, 0, numdInteracoes, output_file);
         output_file << "Iteracao do melhor Resultado: " << novoGrafo->melhorInstancia << endl;
         Graph *ag = novoGrafo->agmPrim(output_file);
         output_file << "Quantidade minima de rotulos usando alfa(" << alfa << "): " << ag->getNumRotulos() << endl;
-        //Clock::time_point t1 = Clock::now();
-        //milliseconds ms = std::chrono::duration_cast<milliseconds>(t1 - t0);
-        output_file<<"tempo de execucao: "<<(clock() - clo)<<" millisegundos"<<endl;
+        // Clock::time_point t1 = Clock::now();
+        // milliseconds ms = std::chrono::duration_cast<milliseconds>(t1 - t0);
+        output_file << "tempo de execucao: " << (clock() - clo) << " millisegundos" << endl;
         ag->printGraph(output_file);
-        
-        
+
         break;
     }
-    //Algoritmo Guloso Radomizado Reativo
+    // Algoritmo Guloso Radomizado Reativo
     case 3:
     {
-        
 
-       
-    srand((unsigned)time(NULL));
+        srand((unsigned)time(NULL));
 
-        
         Graph *novoGrafo = graph->gulosoRandomizadoReativoAux(0, output_file);
-        
+
         Graph *ag = novoGrafo->agmPrim(output_file);
         output_file << "Quantidade minima de rotulos para o conjunto de alfas digitado: " << ag->getNumRotulos() << endl;
-        
+
         ag->printGraph(output_file);
         break;
     }
@@ -201,10 +205,10 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
     }
     case 5:
     {
-        float arestas =(float) graph->getNumberEdges();
-        float vertices =(float) graph->getOrder();
-        float densidade = arestas / ((vertices*(vertices-1))/2);
-        output_file << "Densidade de Arestas do Grafo: "<<densidade<<endl;
+        float arestas = (float)graph->getNumberEdges();
+        float vertices = (float)graph->getOrder();
+        float densidade = arestas / ((vertices * (vertices - 1)) / 2);
+        output_file << "Densidade de Arestas do Grafo: " << densidade << endl;
         break;
     }
     default:
@@ -239,7 +243,7 @@ int mainMenu(ofstream &output_file, Graph *graph)
 int main(int argc, char const *argv[])
 {
 
-    //Verificação se todos os parâmetros do programa foram entrados
+    // Verificação se todos os parâmetros do programa foram entrados
     if (argc != 3)
     {
 
@@ -257,7 +261,7 @@ int main(int argc, char const *argv[])
         cout << "Running " << program_name << " with instance " << instance << " ... " << endl;
     }
 
-    //Abrindo arquivo de entrada
+    // Abrindo arquivo de entrada
     ifstream input_file;
     ofstream output_file;
     input_file.open(argv[1], ios::in);
@@ -275,10 +279,10 @@ int main(int argc, char const *argv[])
 
     mainMenu(output_file, graph);
 
-    //Fechando arquivo de entrada
+    // Fechando arquivo de entrada
     input_file.close();
 
-    //Fechando arquivo de saída
+    // Fechando arquivo de saída
     output_file.close();
 
     return 0;
