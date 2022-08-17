@@ -116,21 +116,23 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
         
         output_file << "Algoritmo Guloso" << endl;
 
-        Graph *novoGrafo = graph->guloso(output_file);
+        Graph * novoGraph = graph->ils(output_file);
+
+        // Graph *novoGrafo = graph->guloso(output_file);
 
 
-        cout<<"pre refinamento"<<endl;
-        Graph *ag = novoGrafo->refinamento(output_file, graph);
-        cout<<"pos refinamento"<<endl;
+        // cout<<"pre refinamento"<<endl;
+        // Graph *ag = novoGrafo->refinamento(output_file, graph);
+        // cout<<"pos refinamento"<<endl;
 
 
 
     
-        output_file << "Quantidade minima de rotulos: " << ag->getNumRotulos() << endl;
+        output_file << "Quantidade minima de rotulos: " << novoGraph->getNumRotulos() << endl;
         
 
         output_file<<"tempo de execucao: "<<(clock() - clo)<<" millisegundos"<<endl;
-        ag->printGraph(output_file);
+        novoGraph->printGraph(output_file);
         break;
     }
     //Algoritmo Guloso Randomizado;
