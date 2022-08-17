@@ -875,7 +875,7 @@ Graph *Graph::refinamento(ofstream &output_file, Graph *grafo)
 
     // criar uma lista de de arestas plausiveis (toda vez q um nó for adicionado adicionar todas as arestas dele)
     std::list<int> arestasPlausiveis;
-    std::list<int>::iterator itrAresta;
+    std::list<int>::iterator itrAresta,itrAresta1,itrAresta2,itrAresta3;
 
     for (Edge *c = noInicial->getFirstEdge(); c != 0; c = c->getNextEdge())
     {
@@ -911,8 +911,15 @@ Graph *Graph::refinamento(ofstream &output_file, Graph *grafo)
             int rotulo = *itrAresta;
             if (adicionados[targetID] == true && rAdc[rotulo] == true)
             { // Se uma aresta chegar até um nó ja visitado, usando um rotulo ja utilizado adiciona ela no grafo
+                houveADC = true;
                 grafoX->insertEdge(origemID, targetID, rotulo);
                 grafoX->insertEdge(targetID, origemID, rotulo);
+                itrAresta3=itrAresta;
+                itrAresta--;
+                itrAresta2=itrAresta;
+                itrAresta--;
+                itrAresta1=itrAresta;
+                break;
             }
 
             // Se uma aresta chegar até um nó não visitado e usar um rotulo ja utilizado adiciona a aresta e remove ela da lista
@@ -933,6 +940,13 @@ Graph *Graph::refinamento(ofstream &output_file, Graph *grafo)
                         arestasPlausiveis.push_back(c->getOrigemId());
                         arestasPlausiveis.push_back(c->getRotulo());
                     }
+                
+                itrAresta3=itrAresta;
+                itrAresta--;
+                itrAresta2=itrAresta;
+                itrAresta--;
+                itrAresta1=itrAresta;
+                break;
                 }
                 else
                 {
@@ -940,6 +954,12 @@ Graph *Graph::refinamento(ofstream &output_file, Graph *grafo)
             }
             // Se uma aresta chegar até um nó não visitado e usar um rotulo não utilizado, não fazer nada
         }
+        if(houveADC==true){
+        arestasPlausiveis.erase(itrAresta3);
+        arestasPlausiveis.erase(itrAresta2);
+        arestasPlausiveis.erase(itrAresta1);
+        }
+
 
         if (houveADC == false)
         {
@@ -1199,14 +1219,14 @@ Graph *Graph::ils(ofstream &output_file)
         }
     }
 
-    int x = 30;
+    int x = 100;
     int j = 0;
 
     // cout << "teste 1" << endl;
     for (int i = 0; i < x; i++)
     {
         j = 0;
-        while (j < 30)
+        while (j < x)
         {
 
             // cout << "teste 2" << endl;
