@@ -171,7 +171,7 @@ int mainMenu(ofstream &output_file, Graph *graph)
 
     while (selecao != 0)
     {
-        system("cls");
+        //system("cls");
         selecao = menu();
 
         if (output_file.is_open())
