@@ -1121,7 +1121,7 @@ Graph *Graph::buscaLocalAleatoria(Graph *grafo, ofstream &output_file)
 }
 Graph *Graph::realizaPertubacao(Graph *grafo)
 {
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < (this->getNumRotulos()/25); i++)
     {
         // cout << "teste 2.1" << endl;
         // cout << "num rotulos 2.1: " << grafo->getNumRotulos() << endl;
@@ -1199,14 +1199,14 @@ Graph *Graph::ils(ofstream &output_file)
         }
     }
 
-    int x = 100;
+    int x = 30;
     int j = 0;
 
     // cout << "teste 1" << endl;
     for (int i = 0; i < x; i++)
     {
         j = 0;
-        while (j < x)
+        while (j < 30)
         {
 
             // cout << "teste 2" << endl;

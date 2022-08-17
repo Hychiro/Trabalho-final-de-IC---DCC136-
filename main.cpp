@@ -91,11 +91,8 @@ int menu()
 
     cout << "MENU" << endl;
     cout << "----" << endl;
-    cout << "[1] Algoritmo GLS" << endl;
-    cout << "[2] Algoritmo Guloso Randomizado" << endl;
-    cout << "[3] Algoritmo Guloso Randomizado Reativo" << endl;
-    cout << "[4] Printando o Grafo " << endl;
-    cout << "[5] Densidade de Arestas do Grafo " << endl;
+    cout << "[1] Algoritmo ILS" << endl;
+    
     cout << "[0] Sair" << endl;
 
     cin >> selecao;
@@ -111,23 +108,29 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
     // Algoritmo Guloso;
     case 1:
     {
+        
         int clo = clock();
         srand((unsigned)time(NULL));
-         Graph *melhorSol;
-        for (int i = 0; i < 100; i++)
+        Graph *melhorSol;
+        float media;
+        cout<< "Executando ILS 10x"<<endl;
+        for (int i = 0; i < 10; i++)
         {
+             
             
-
-            output_file << "Algoritmo Guloso" << endl;
+            output_file << "ILS "<<i<< endl;
 
             Graph *novoGraph = graph->ils(output_file);
            
             if (i == 0)
             {
                 melhorSol = novoGraph;
+                media = novoGraph->getNumRotulos();
             }
             else
-            {
+            {   
+                media = novoGraph->getNumRotulos() + media;
+
                 if (novoGraph->getNumRotulos() < melhorSol->getNumRotulos())
                 {
                     melhorSol = novoGraph;
@@ -144,73 +147,16 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
             output_file << "Quantidade minima de rotulos: " << novoGraph->getNumRotulos() << endl;
 
            
-            //novoGraph->printGraph(output_file);
+            
         }
         output_file << "Melhor Quantidade minima de rotulos: " << melhorSol->getNumRotulos() << endl;
-
-         output_file << "tempo de execucao: " << (clock() - clo) << " millisegundos" << endl;
-        break;
-    }
-    // Algoritmo Guloso Randomizado;
-    case 2:
-    {
-        output_file << "Algoritmo Guloso Radomizado" << endl;
-
-        float alfa;
-        cout << "Digite o alfa:" << endl;
-        cin >> alfa;
-
-        int numdInteracoes;
-        cout << "Digite o numero de Iteracoes:" << endl;
-        cin >> numdInteracoes;
-        srand((unsigned)time(NULL));
-
-        // typedef std::chrono::high_resolution_clock Clock;
-        // typedef std::chrono::milliseconds milliseconds;
-        // Clock::time_point t0 = Clock::now();
-        int clo = clock();
-
-        Graph *novoGrafo = graph->gulosoRandomizadoAux(alfa, 0, numdInteracoes, output_file);
-        output_file << "Iteracao do melhor Resultado: " << novoGrafo->melhorInstancia << endl;
-        Graph *ag = novoGrafo->agmPrim(output_file);
-        output_file << "Quantidade minima de rotulos usando alfa(" << alfa << "): " << ag->getNumRotulos() << endl;
-        // Clock::time_point t1 = Clock::now();
-        // milliseconds ms = std::chrono::duration_cast<milliseconds>(t1 - t0);
+        output_file << "Media rotulos: " << media/10 << endl;
         output_file << "tempo de execucao: " << (clock() - clo) << " millisegundos" << endl;
-        ag->printGraph(output_file);
-
+        output_file<< "Melhor Solucao"<<endl;
+        melhorSol->printGraph(output_file);
         break;
     }
-    // Algoritmo Guloso Radomizado Reativo
-    case 3:
-    {
-
-        srand((unsigned)time(NULL));
-
-        Graph *novoGrafo = graph->gulosoRandomizadoReativoAux(0, output_file);
-
-        Graph *ag = novoGrafo->agmPrim(output_file);
-        output_file << "Quantidade minima de rotulos para o conjunto de alfas digitado: " << ag->getNumRotulos() << endl;
-
-        ag->printGraph(output_file);
-        break;
-    }
-
-    case 4:
-    {
-
-        graph->printGraph(output_file);
-
-        break;
-    }
-    case 5:
-    {
-        float arestas = (float)graph->getNumberEdges();
-        float vertices = (float)graph->getOrder();
-        float densidade = arestas / ((vertices * (vertices - 1)) / 2);
-        output_file << "Densidade de Arestas do Grafo: " << densidade << endl;
-        break;
-    }
+    
     default:
     {
         cout << " Error!!! invalid option!!" << endl;
@@ -271,7 +217,7 @@ int main(int argc, char const *argv[])
 
     if (input_file.is_open())
     {
-
+        
         graph = leituraInstancia(input_file, output_file);
     }
     else
