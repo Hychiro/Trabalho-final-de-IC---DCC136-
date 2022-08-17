@@ -31,6 +31,7 @@ class Edge{
         Edge* getNextEdge();
         int getRotulo();
         // Setters
+        void setTargetId(int id);
         void setOrigemId(int id);
         void setNextEdge(Edge* edge);
         void setRotulo(int rotulo); 

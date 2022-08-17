@@ -112,18 +112,25 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
     //Algoritmo Guloso;
     case 1:
     {
+        srand((unsigned)time(NULL));
+        for(int i=0;i<100;i++){
         int clo = clock();
         
         output_file << "Algoritmo Guloso" << endl;
 
         //Graph * novoGraph = graph->ils(output_file);
+        Graph *novoGrafo;
+        Graph *ag;
 
-        Graph *novoGrafo = graph->guloso(output_file);
+        novoGrafo = graph->guloso(output_file);
 
 
         cout<<"pre refinamento"<<endl;
-        Graph *ag = novoGrafo->refinamento(output_file, graph);
+
+        ag = novoGrafo->refinamento(output_file, graph);
+
         cout<<"pos refinamento"<<endl;
+        
 
 
 
@@ -133,6 +140,7 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
 
         output_file<<"tempo de execucao: "<<(clock() - clo)<<" millisegundos"<<endl;
         ag->printGraph(output_file);
+        }
         break;
     }
     //Algoritmo Guloso Randomizado;

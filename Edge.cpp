@@ -54,6 +54,12 @@ int Edge::getOrigemId(){
 }
 
 // Setters
+
+void Edge::setTargetId(int id){
+
+    this->target_id = id;
+
+}
 void Edge::setNextEdge(Edge* edge){
 
     this->next_edge = edge;

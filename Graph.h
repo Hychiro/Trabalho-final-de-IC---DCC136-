@@ -53,6 +53,7 @@ public:
     Graph *buscaLocal(Graph *grafo);
     Graph *buscaLocalAleatoria(Graph *grafo, ofstream &output_file);
     int buscaRotuloAleatorio(int numRotTOTAL);
+    bool buscaRotulo(int rotulo);
     Graph *realizaPertubacao(Graph *grafo);
     Graph *preencheGraph(Graph *grafo);
 

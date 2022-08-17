@@ -857,7 +857,7 @@ Graph *Graph::refinamento(ofstream &output_file, Graph *grafo)
     // limpa a lista
     itrBegin = nodesIniciais.begin();
     itrLast = nodesIniciais.end();
-    nodesIniciais.erase(itrBegin, itrLast);
+    nodesIniciais.clear();
 
     // criar um gravo vazio
     Graph *grafoX = new Graph(this->getOrder(), -1);
@@ -874,12 +874,14 @@ Graph *Graph::refinamento(ofstream &output_file, Graph *grafo)
     // cout << "no Inicial = " << noInicial->getId() << endl;
 
     // criar uma lista de de arestas plausiveis (toda vez q um nó for adicionado adicionar todas as arestas dele)
-    std::list<Edge> arestasPlausiveis;
-    std::list<Edge>::iterator itrAresta;
+    std::list<int> arestasPlausiveis;
+    std::list<int>::iterator itrAresta;
+
     for (Edge *c = noInicial->getFirstEdge(); c != 0; c = c->getNextEdge())
     {
-        Edge *e1=new Edge(c->getTargetId(),c->getOrigemId());
-        arestasPlausiveis.push_back(*e1);
+       arestasPlausiveis.push_back(c->getTargetId());
+       arestasPlausiveis.push_back(c->getOrigemId());
+       arestasPlausiveis.push_back(c->getRotulo());
     }
 
     // criar um vetor de rotulos ja utilizados
@@ -890,8 +892,8 @@ Graph *Graph::refinamento(ofstream &output_file, Graph *grafo)
         rAdc[j] = false; // inicia todos rotulos como não adicionados
     }
 
-    std::list<Edge> arestasASortear;
-    std::list<Edge>::iterator itrBegin3, itrLast3, itr2;
+    std::list<int> arestasASortear;
+    std::list<int>::iterator itrBegin3, itrLast3, itr2;
 
     std::list<int> vizinhosASortear;
     std::list<int>::iterator itrBegin2, itrLast2;
@@ -902,27 +904,34 @@ Graph *Graph::refinamento(ofstream &output_file, Graph *grafo)
         // passar pela lista de arestas
         for (itrAresta = arestasPlausiveis.begin(); itrAresta != arestasPlausiveis.end(); itrAresta++)
         {
-            if (adicionados[itrAresta->getTargetId()] == true)
-            { // Se uma aresta chegar até um nó ja visitado, remove ela da lista
-                // arestasPlausiveis.erase(itrAresta);
+            int targetID=*itrAresta;
+            itrAresta++;
+            int origemID=*itrAresta;
+            itrAresta++;
+            int rotulo=*itrAresta;
+            if (adicionados[targetID] == true && rAdc[rotulo]== true)
+            { // Se uma aresta chegar até um nó ja visitado, usando um rotulo ja utilizado adiciona ela no grafo
+                    grafoX->insertEdge(origemID, targetID, rotulo);
+                    grafoX->insertEdge(targetID, origemID, rotulo);
             }
 
             // Se uma aresta chegar até um nó não visitado e usar um rotulo ja utilizado adiciona a aresta e remove ela da lista
-            if (adicionados[itrAresta->getTargetId()] == false)
+            if (adicionados[targetID] == false)
             {
-                if (rAdc[itrAresta->getRotulo()] == true)
+                if (rAdc[rotulo] == true)
                 {
                     // cout << "entrou aqui 1" << endl;
-                    grafoX->insertEdge(itrAresta->getOrigemId(), itrAresta->getTargetId(), itrAresta->getRotulo());
-                    grafoX->insertEdge(itrAresta->getTargetId(), itrAresta->getOrigemId(), itrAresta->getRotulo());
+                    grafoX->insertEdge(origemID, targetID, rotulo);
+                    grafoX->insertEdge(targetID, origemID, rotulo);
                     // arestasPlausiveis.erase(itrAresta);
                     houveADC = true;
-                    adicionados[itrAresta->getTargetId()] = true;
+                    adicionados[targetID] = true;
                     // cout << "marcando o vertice " << itrAresta->getTargetId() << " como visitado" << endl;
-                    for (Edge *c = this->getNode(itrAresta->getTargetId())->getFirstEdge(); c != 0; c = c->getNextEdge())
+                    for (Edge *c = this->getNode(targetID)->getFirstEdge(); c != 0; c = c->getNextEdge())
                     {
-                        Edge *e2=new Edge(c->getTargetId(),c->getOrigemId());
-                        arestasPlausiveis.push_back(*e2);
+                        arestasPlausiveis.push_back(c->getTargetId());
+                        arestasPlausiveis.push_back(c->getOrigemId());
+                        arestasPlausiveis.push_back(c->getRotulo());
                     }
                 }
                 else
@@ -956,8 +965,13 @@ Graph *Graph::refinamento(ofstream &output_file, Graph *grafo)
             // passar por todas arestas da lista, toda vez que passar por uma aresta somar 1 no vizinho[targetid] correspondente
             for (itrAresta = arestasPlausiveis.begin(); itrAresta != arestasPlausiveis.end(); itrAresta++)
             {
+                int targetID=*itrAresta;
+                itrAresta++;
+                int origemID=*itrAresta;
+                itrAresta++;
+                int rotulo=*itrAresta;
                 // cout << "vizinho " << itrAresta->getTargetId() << " possui " << vizinhos[itrAresta->getTargetId()] + 1 << " arestas" << endl;
-                vizinhos[itrAresta->getTargetId()]++;
+                vizinhos[targetID]++;
             }
 
             int menorVizinho = 9999999;
@@ -1000,46 +1014,56 @@ Graph *Graph::refinamento(ofstream &output_file, Graph *grafo)
             vizinhosASortear.erase(itrBegin2, itrLast2);
 
             // sortear uma das arestas adicionar ela no grafo, removendo ela da lista e atualizando os rotulos
-            for (itr2 = arestasPlausiveis.begin(); itr2 != arestasPlausiveis.end(); itr2++) // passo por todas arestas plausiveis
+            for (itrAresta = arestasPlausiveis.begin(); itrAresta != arestasPlausiveis.end(); itrAresta++) // passo por todas arestas plausiveis
             {
-                if (itr2->getTargetId() == vizinhoEscolhido) // se essa aresta toca no vértice sorteado
+                int targetID=*itrAresta;
+                itrAresta++;
+                int origemID=*itrAresta;
+                itrAresta++;
+                int rotulo=*itrAresta;
+                if (targetID == vizinhoEscolhido) // se essa aresta toca no vértice sorteado
                 {
                     // cout << "Aresta " << itrAresta->getOrigemId() << " -- " << itrAresta->getTargetId() << " adicionada para o sorteio" << endl;
-                    Edge *a1=new Edge(itr2->getTargetId(),itr2->getOrigemId());
-                    arestasASortear.push_back(*a1); // bota ela a ser sorteada;
+                    arestasASortear.push_back(targetID);
+                    arestasASortear.push_back(origemID);
+                    arestasASortear.push_back(rotulo); // bota ela a ser sorteada;
                 }
             }
             // cout << "tamanho final da lista: " << arestasASortear.size() << endl;
 
             // sortear uma das arestas
 
-            int numSorteado3 = sorteia(arestasASortear.size());
+            int numSorteado3 = sorteia(arestasASortear.size()/3);
 
             // pega na lista a aresta sorteada
             itrBegin3 = arestasASortear.begin();
 
-            advance(itrBegin3, numSorteado3);
+            advance(itrBegin3, numSorteado3*3);
 
-            int rotulo = itrBegin3->getRotulo();
-            int origem = itrBegin3->getOrigemId();
-            int target = itrBegin3->getTargetId();
+            int targetID = *itrBegin3;
+            itrBegin3++;
+            int origemID = *itrBegin3;
+            itrBegin3++;
+            int rotulo = *itrBegin3;
 
             // cout << "Rotulo " << rotulo << " Adicionado" << endl;
             // cout << "vertice adicionado = " << origem << " -- " << target << endl;
 
-            adicionados[target] = true;
+            adicionados[targetID] = true;
             // cout << "marcando o vertice " << target << " como visitado" << endl;
 
             rAdc[rotulo] = true;
 
             // adiciona a arresta sorteada
-            grafoX->insertEdge(origem, target, rotulo);
-            grafoX->insertEdge(target, origem, rotulo);
+            grafoX->insertEdge(origemID, targetID, rotulo);
+            grafoX->insertEdge(targetID, origemID, rotulo);
 
-            for (Edge *c = this->getNode(itrBegin3->getTargetId())->getFirstEdge(); c != 0; c = c->getNextEdge())
+            for (Edge *c = this->getNode(targetID)->getFirstEdge(); c != 0; c = c->getNextEdge())
             {
-                Edge *e3=new Edge(c->getTargetId(),c->getOrigemId());
-                arestasPlausiveis.push_back(*e3);
+                
+            arestasPlausiveis.push_back(c->getTargetId());
+            arestasPlausiveis.push_back(c->getOrigemId());
+            arestasPlausiveis.push_back(c->getRotulo());
             }
 
             itrBegin3 = arestasASortear.begin();
@@ -1061,14 +1085,19 @@ Graph *Graph::refinamento(ofstream &output_file, Graph *grafo)
         }
         // cout << "teste2" << endl;
     }
-    // cout << "7" << endl;
+    arestasPlausiveis.clear();
+    arestasASortear.clear();
+    vizinhosASortear.clear();
+
+    cout << "retorna" << endl;
     return grafoX;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Graph *Graph::buscaLocalAleatoria(Graph *grafo, ofstream &output_file)
 {
-    Graph *novoGrafo = this->preencheGraph(grafo);
+    
+    Graph *novoGrafo = grafo;
     
     cout << "teste 2.1" << endl;
     int rotuloAleatorio = novoGrafo->buscaRotuloAleatorio(this->numeroRotulos);
@@ -1079,7 +1108,7 @@ Graph *Graph::buscaLocalAleatoria(Graph *grafo, ofstream &output_file)
     cout << "teste 2.3" << endl;
     Graph *solucao = novoGrafo->refinamento(output_file, this);
     cout << "teste 2.4" << endl;
-    if (grafo >= solucao)
+    if (grafo->getNumRotulos() >= solucao->getNumRotulos())
     {
         return solucao;
     }
@@ -1114,7 +1143,7 @@ int Graph::buscaRotuloAleatorio(int numRotTOTAL)
     return rotuloAleatorio;
 }
 
-bool Graph::buscaRotuloAleatorio(int rotulo)
+bool Graph::buscaRotulo(int rotulo)
 {
     bool found = false;
     while (!found)
@@ -1133,16 +1162,18 @@ Graph *Graph::preencheGraph(Graph *grafo)
         grafoNode = grafo->getNode(p->getId());
         for (Edge *q = p->getFirstEdge(); q != NULL; q = q->getNextEdge())
         {
-            if (grafo->buscaRotuloAleatorio(q->getRotulo()))
+            //
+            if (grafo->buscaRotulo(q->getRotulo()))
             {
                 if (!grafo->verificaAresta(grafoNode->getId(), q->getTargetId()))
                 {
-                    grafoNode->insertEdge(grafoNode->getId(), q->getTargetId(), q->getRotulo());
+                    grafoNode->insertEdge( q->getTargetId(), q->getRotulo());
                 }
             }
+            //
         }
     }
-    return grafo
+    return grafo;
 }
 Graph *Graph::ils(ofstream &output_file)
 {
@@ -1161,11 +1192,12 @@ Graph *Graph::ils(ofstream &output_file)
             cout << "teste 2" << endl;
             novoGraph = this->buscaLocalAleatoria(novoGraph, output_file);
 
-            if (melhorSol > novoGraph)
+            if (melhorSol->getNumRotulos() > novoGraph->getNumRotulos())
             {
                 cout << "teste 3" << endl;
                 melhorSol = novoGraph;
             }
+            //novoGraph = this->preencheGraph(novoGraph);
             j++;
         }
 
